@@ -33,6 +33,7 @@ cover:
 
 Dec 04, 2025: Neat sale, LFC!
 Dec 05, 2025: Installing the kube
+Dec 06, 2025: Trying to fix my control plane and nodes
 
 ## 0x01: The Setup
 
