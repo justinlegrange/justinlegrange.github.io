@@ -126,3 +126,8 @@ outputs:
     - HTML
     - RSS
     - JSON # necessary for search
+
+# Github Pages config
+caches:
+  images:
+    dir: :cacheDir/images
