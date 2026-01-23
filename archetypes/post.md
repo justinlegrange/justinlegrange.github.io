@@ -13,7 +13,7 @@ TocOpen: false
 hidemeta: false
 disableHLJS: true # to disable highlightjs
 disableShare: false
-hideSummary: false
+hideSummary: true
 searchHidden: true
 ShowReadingTime: true
 ShowBreadCrumbs: false
