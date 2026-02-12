@@ -1,12 +1,13 @@
 ---
-title: "VS Code + Remote = 🧡"
+title: "KodeKloud's 100 Days of DevOps: Day 61 - 70"
 date: 2025-12-02 # YYYY-MM-DD
-description: "Remote development never felt so good!"
+description: "Desc Text."
 # weight: 1
 # aliases: ["/first"]
 draft: true
-categories: ["Development"]
-tags: ["development", "productivity"]
+# series: ["Themes Guide"]
+categories: ["themes", "syntax"]
+tags: ["first"]
 showToc: true
 TocOpen: false
 hidemeta: false
@@ -29,9 +30,24 @@ cover:
     cover.responsiveImages: true
 ---
 
-## 0x00 :: The Setup
+## Intro
 
-https://code.visualstudio.com/docs/remote/ssh
+## Day 61: Init Containers in Kubernetes
 
-## 0x01 :: Action!
+## Day 62: Manage Secrets in Kubernetes
 
+## Day 63: Deploy Iron Gallery App on Kubernetes
+
+## Day 64: Fix Python App Deployed on Kubernetes Cluster
+
+## Day 65: Deploy Redis Deployment on Kubernetes
+
+## Day 66: Deploy MySQL on Kubernetes
+
+## Day 67: Deploy Guest Book App on Kubernetes
+
+## Day 68: Set Up Jenkins Server
+
+## Day 69: Install Jenkins Plugins
+
+## Day 70: Configure Jenkins User Access

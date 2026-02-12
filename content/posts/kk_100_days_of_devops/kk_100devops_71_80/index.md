@@ -1,12 +1,13 @@
 ---
-title: "VS Code + Remote = 🧡"
+title: "KodeKloud's 100 Days of DevOps: Day 71 - 80"
 date: 2025-12-02 # YYYY-MM-DD
-description: "Remote development never felt so good!"
+description: "Desc Text."
 # weight: 1
 # aliases: ["/first"]
 draft: true
-categories: ["Development"]
-tags: ["development", "productivity"]
+# series: ["Themes Guide"]
+categories: ["themes", "syntax"]
+tags: ["first"]
 showToc: true
 TocOpen: false
 hidemeta: false
@@ -29,9 +30,24 @@ cover:
     cover.responsiveImages: true
 ---
 
-## 0x00 :: The Setup
+## Intro
 
-https://code.visualstudio.com/docs/remote/ssh
+## Day 71: Configure Jenkins Job for Package Installation
 
-## 0x01 :: Action!
+## Day 72: Jenkins Parameterized Builds
 
+## Day 73: Jenkins Scheduled Jobs
+
+## Day 74: Jenkins Database Backup Job
+
+## Day 75: Jenkins Slave Nodes
+
+## Day 76: Jenkins Project Security
+
+## Day 77: Jenkins Deploy Pipeline
+
+## Day 78: Jenkins Conditional Pipeline
+
+## Day 79: Jenkins Deployment Job
+
+## Day 80: Jenkins Chained Builds

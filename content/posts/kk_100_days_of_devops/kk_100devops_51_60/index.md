@@ -1,12 +1,13 @@
 ---
-title: "VS Code + Remote = 🧡"
+title: "KodeKloud's 100 Days of DevOps: Day 51 - 60"
 date: 2025-12-02 # YYYY-MM-DD
-description: "Remote development never felt so good!"
+description: "Desc Text."
 # weight: 1
 # aliases: ["/first"]
 draft: true
-categories: ["Development"]
-tags: ["development", "productivity"]
+# series: ["Themes Guide"]
+categories: ["themes", "syntax"]
+tags: ["first"]
 showToc: true
 TocOpen: false
 hidemeta: false
@@ -29,9 +30,24 @@ cover:
     cover.responsiveImages: true
 ---
 
-## 0x00 :: The Setup
+## Intro
 
-https://code.visualstudio.com/docs/remote/ssh
+## Day 51: Execute Rolling Updates in Kubernetes
 
-## 0x01 :: Action!
+## Day 52: Revert Deployment to Previous Version in Kubernetes
 
+## Day 53: Resolve VolumeMounts Issue in Kubernetes
+
+## Day 54: Kubernetes Shared Volumes
+
+## Day 55: Kubernetes Sidecar Containers
+
+## Day 56: Deploy Nginx Web Server on Kubernetes Cluster
+
+## Day 57: Print Environment Variables
+
+## Day 58: Deploy Grafana on Kubernetes Cluster
+
+## Day 59: Troubleshoot Deployment issues in Kubernetes
+
+## Day 60: Persistent Volumes in Kubernetes

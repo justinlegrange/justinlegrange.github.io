@@ -1,12 +1,13 @@
 ---
-title: "VS Code + Remote = 🧡"
+title: "KodeKloud's 100 Days of DevOps: Day 41 - 50"
 date: 2025-12-02 # YYYY-MM-DD
-description: "Remote development never felt so good!"
+description: "Desc Text."
 # weight: 1
 # aliases: ["/first"]
 draft: true
-categories: ["Development"]
-tags: ["development", "productivity"]
+# series: ["Themes Guide"]
+categories: ["themes", "syntax"]
+tags: ["first"]
 showToc: true
 TocOpen: false
 hidemeta: false
@@ -29,9 +30,24 @@ cover:
     cover.responsiveImages: true
 ---
 
-## 0x00 :: The Setup
+## Intro
 
-https://code.visualstudio.com/docs/remote/ssh
+## Day 41: Write a Docker File
 
-## 0x01 :: Action!
+## Day 42: Create a Docker Network
 
+## Day 43: Docker Ports Mapping
+
+## Day 44: Write a Docker Compose File
+
+## Day 45: Resolve Dockerfile Issues
+
+## Day 46: Deploy an App on Docker Containers
+
+## Day 47: Docker Python App
+
+## Day 48: Deploy Pods in Kubernetes Cluster
+
+## Day 49: Deploy Applications with Kubernetes Deployments
+
+## Day 50: Set Resource Limits in Kubernetes Pods

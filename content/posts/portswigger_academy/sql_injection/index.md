@@ -1,12 +1,13 @@
 ---
-title: "VS Code + Remote = 🧡"
+title: "PSWA: SQL Injection"
 date: 2025-12-02 # YYYY-MM-DD
-description: "Remote development never felt so good!"
+description: "Desc Text."
 # weight: 1
 # aliases: ["/first"]
 draft: true
-categories: ["Development"]
-tags: ["development", "productivity"]
+series: ["Portswigger Web Academy"]
+categories: ["PSWA", "Web App Security"]
+tags: ["appsec", "pswa", "websec", "hacking"]
 showToc: true
 TocOpen: false
 hidemeta: false
@@ -28,10 +29,3 @@ cover:
     hidden: false # only hide on current single page
     cover.responsiveImages: true
 ---
-
-## 0x00 :: The Setup
-
-https://code.visualstudio.com/docs/remote/ssh
-
-## 0x01 :: Action!
-
