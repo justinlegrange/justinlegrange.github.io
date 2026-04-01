@@ -4,7 +4,7 @@ date: 2026-03-13 # YYYY-MM-DD
 description: "Desc Text."
 # weight: 1
 # aliases: ["/first"]
-# draft: true
+draft: true
 series: ["Portswigger Web Academy"]
 categories: ["PSWA", "Web App Security"]
 tags: ["appsec", "pswa", "websec", "hacking"]
