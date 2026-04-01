@@ -3,127 +3,37 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>http://localhost:1313/tags/appsec/</loc>
-    <lastmod>2026-02-05T00:00:00+00:00</lastmod>
+    <lastmod>2026-03-13T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/categories/</loc>
-    <lastmod>2026-02-05T00:00:00+00:00</lastmod>
+    <lastmod>2026-03-13T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tags/hacking/</loc>
-    <lastmod>2026-02-05T00:00:00+00:00</lastmod>
+    <lastmod>2026-03-13T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/</loc>
-    <lastmod>2026-02-05T00:00:00+00:00</lastmod>
+    <lastmod>2026-03-13T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/portswigger_academy/information_disclosure/</loc>
-    <lastmod>2026-02-05T00:00:00+00:00</lastmod>
+    <loc>http://localhost:1313/posts/portswigger_academy/http_request_smuggling/</loc>
+    <lastmod>2026-03-13T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/posts/</loc>
-    <lastmod>2026-02-05T00:00:00+00:00</lastmod>
+    <lastmod>2026-03-13T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tags/pswa/</loc>
-    <lastmod>2026-02-05T00:00:00+00:00</lastmod>
+    <lastmod>2026-03-13T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/categories/pswa/</loc>
-    <lastmod>2026-02-05T00:00:00+00:00</lastmod>
+    <lastmod>2026-03-13T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tags/</loc>
-    <lastmod>2026-02-05T00:00:00+00:00</lastmod>
+    <lastmod>2026-03-13T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/categories/web-app-security/</loc>
-    <lastmod>2026-02-05T00:00:00+00:00</lastmod>
+    <lastmod>2026-03-13T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tags/websec/</loc>
-    <lastmod>2026-02-05T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/devops/</loc>
-    <lastmod>2026-01-07T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/categories/devops/</loc>
-    <lastmod>2026-01-07T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/kodekloud/</loc>
-    <lastmod>2026-01-07T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/categories/kodekloud/</loc>
-    <lastmod>2026-01-07T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/posts/kk_100_days_of_devops/kk_100devops_31_40/</loc>
-    <lastmod>2026-01-07T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/linux/</loc>
-    <lastmod>2026-01-07T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/posts/kk_100_days_of_devops/kk_100devops_21_30/</loc>
-    <lastmod>2026-01-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/posts/kk_100_days_of_devops/kk_100devops_11_20/</loc>
-    <lastmod>2025-12-31T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/bash/</loc>
-    <lastmod>2025-12-16T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/cron/</loc>
-    <lastmod>2025-12-16T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/posts/kk_100_days_of_devops/kk_100devops_01_10/</loc>
-    <lastmod>2025-12-16T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/categories/sysadmin/</loc>
-    <lastmod>2025-12-16T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/sysadmin/</loc>
-    <lastmod>2025-12-16T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/certifications/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/posts/cka_cks/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/first/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/posts/kk_100_days_of_devops/kk_100devops_41_50/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/posts/kk_100_days_of_devops/kk_100devops_51_60/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/posts/kk_100_days_of_devops/kk_100devops_61_70/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/posts/kk_100_days_of_devops/kk_100devops_71_80/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/posts/kk_100_days_of_devops/kk_100devops_81_90/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/posts/kk_100_days_of_devops/kk_100devops_91_100/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/categories/kubernetes/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/kubernetes/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/posts/portswigger_academy/host_header_attacks/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/posts/portswigger_academy/web_cache_poisoning/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/posts/portswigger_academy/sql_injection/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/security/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/categories/syntax/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/categories/themes/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
+    <lastmod>2026-03-13T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/about/</loc>
   </url><url>
