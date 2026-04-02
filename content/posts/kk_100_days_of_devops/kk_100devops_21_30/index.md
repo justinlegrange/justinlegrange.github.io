@@ -227,12 +227,14 @@ Date:   Sat Jan 3 23:11:31 2026 +0000
     initial commit
 ```
 
+```
 [natasha@ststor01 blog]$ sudo git reset 8b1e383b13b2125811cc02461360c2b1b7241750
 Unstaged changes after reset:
 D       info.txt
 
 [natasha@ststor01 blog]$ sudo git add .
-[natasha@ststor01 blog]$ sudo git commit -m 'revert blog'
+[natasha@ststor01 blog]$ sudo git commit -m 'revert blog
+```
 
 And....failure.
 
