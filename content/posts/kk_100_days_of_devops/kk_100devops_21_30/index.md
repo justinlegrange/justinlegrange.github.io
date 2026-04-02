@@ -236,7 +236,7 @@ D       info.txt
 
 And....failure.
 
-### Learning the difference - HEAD vs <COMMIT ID>
+### Learning the difference - HEAD vs `COMMIT ID`
 
 So what went wrong? According to other solutions out there, I needed to use `sudo git revert HEAD` instead of resetting to the original commit message. If we do that, the output will change drastically.
 
