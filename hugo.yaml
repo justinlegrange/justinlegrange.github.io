@@ -3,6 +3,8 @@ title: J. LeGrange
 pagination.pagerSize: 5
 theme: PaperMod
 
+enableEmoji: true
+
 enableRobotsTXT: true
 buildDrafts: false
 buildFuture: false
@@ -14,8 +16,8 @@ minify:
 
 params:
   env: production # to enable google analytics, opengraph, twitter-cards and schema.
-  title: jlegrange
-  description: "Justin's portfolio/tech blog."
+  title: j.legrange
+  description: "A professional blog dedicated to DevOps, hacking, and generic tech discoveries."
   keywords: [Blog, Portfolio, InfoSec, DevOps]
   author: Justin LeGrange
   DateFormat: "January 2, 2006"
@@ -41,11 +43,11 @@ params:
   assets:
     # disableHLJS: true # to disable highlight.js
     # disableFingerprinting: true
-    favicon: "<link / abs url>"
-    favicon16x16: "<link / abs url>"
-    favicon32x32: "<link / abs url>"
-    apple_touch_icon: "<link / abs url>"
-    safari_pinned_tab: "<link / abs url>"
+    # favicon: "<link / abs url>"
+    # favicon16x16: "<link / abs url>"
+    # favicon32x32: "<link / abs url>"
+    # apple_touch_icon: "<link / abs url>"
+    # safari_pinned_tab: "<link / abs url>"
 
   label:
     text: "J. LeGrange"
@@ -68,9 +70,9 @@ params:
     #     url: tags
 
   # home-info mode
-  homeInfoParams:
-    Title: "Hi there \U0001F44B"
-    Content: Welcome to my blog
+  # homeInfoParams:
+  #   Title: "Hi there \U0001F44B"
+  #   Content: Welcome to my blog
 
   socialIcons:
     - name: linkedin
