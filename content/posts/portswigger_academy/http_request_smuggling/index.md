@@ -368,7 +368,49 @@ asdf
 
 ## 0x0A: HTTP/2 request smuggling via CRLF injection
 
+Prompt:
+> This lab is vulnerable to request smuggling because the front-end server downgrades HTTP/2 requests and fails to adequately sanitize incoming headers.
+> 
+> To solve the lab, use an HTTP/2-exclusive request smuggling vector to gain access to another user's account. The victim accesses the home page every 15 seconds.
+> 
+> If you're not familiar with Burp's exclusive features for HTTP/2 testing, please refer to the documentation for details on how to use them.
+
 asdf
+
+step 1 - ID vulnerable data
+my account, nothing too interesting
+search has a UL element - maybe reflected XSS delivered via HRS?
+nope, doing entity encoding
+
+maybe HRS in a comment field?
+we need some kind of data - thinking cookies are the way, via HRS -> post comment with next request's data in comment
+
+kettling request on home page shows that there's a CL.TE behind the H2 frontend
+need to use inspector panel to edit the headers, then hit shift+enter to add a `\r\nTransfer-Encoding: chunked` to the request
+easiest way is to just add your own header
+
+smuggled request will need the cookie and csrf to submit request
+
+make a request group to quickly test smuggling
+Set Send button to Send > Send group in sequence (single connection)
+
+finding the correct length:
+cl 1500 seems to be too much
+1250 too much
+1150 works
+1200 doesn't work
+1175 works
+1190 - probable max
+
+now we change the post id to get a clean page lol
+send without the second request in group to hopefully catch the user doing stuff
+Send button > Send Current Tab to only send the first request
+
+Looking through the request, we see a couple of extra cookies + a session
+add session to our chrome cookies/replace current one, refresh - we're carlos, lab solved!
+
+interestingly, this _isn't_ the solution from portswigger - they used the search feature to pull down the other user's cookie by HRS
+tl;dr is that by CRLF'ing the TE header into the search, the next user's request gets popped into your recent searches
 
 ## 0x0B: HTTP/2 request splitting via CRLF injection
 
