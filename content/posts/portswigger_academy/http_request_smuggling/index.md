@@ -414,7 +414,44 @@ tl;dr is that by CRLF'ing the TE header into the search, the next user's request
 
 ## 0x0B: HTTP/2 request splitting via CRLF injection
 
+Prompt:
+> This lab is vulnerable to request smuggling because the front-end server downgrades HTTP/2 requests and fails to adequately sanitize incoming headers.
+> 
+> To solve the lab, delete the user carlos by using response queue poisoning to break into the admin panel at /admin. An admin user will log in approximately every 10 seconds.
+> 
+> The connection to the back-end is reset every 10 requests, so don't worry if you get it into a bad state - just send a few normal requests to get a fresh connection. 
+
 asdf
+
+finding the split - can add a header and kettle the request
+req 1 - gives homepage, req 2 - gives 404 page
+
+now weaponize - need to get to /admin to see what's present there
+says admin logs every 10 seconds, so hopefully we can catch it by rolling a request every ~4s
+
+we should see a 302 redir, use that session id
+can either manually do it via repeater or add the session token to your chrome
+
+set up a request to `/my-account?id=administrator`
+
+```http
+GET /my-account?id=administrator HTTP/2
+Host: 0a33004f046bb27a818b1be500e40041.web-security-academy.net
+Cookie: session=8BcwG5nzHlRqQPySMMl9Gx7zKMRrHw2Y;
+```
+
+response has a link to `/admin`
+change the request to point to `/admin`
+
+```http
+GET /admin HTTP/2
+Host: 0a33004f046bb27a818b1be500e40041.web-security-academy.net
+Cookie: session=8BcwG5nzHlRqQPySMMl9Gx7zKMRrHw2Y;
+```
+
+response has link to `/admin/delete?username=carlos` - this is the goal endpoint
+
+send the delete request for carlos!
 
 ## 0x0C: 0.CL request smuggling
 
