@@ -801,7 +801,88 @@ make sure that JS files aren't filtered, and even include images and anything yo
 
 ## 0x13: Bypassing access controls via HTTP/2 request tunnelling
 
+Prompt:
+> This lab is vulnerable to request smuggling because the front-end server downgrades HTTP/2 requests and fails to adequately sanitize incoming header names. To solve the lab, access the admin panel at /admin as the administrator user and delete the user carlos.
+> 
+> The front-end server doesn't reuse the connection to the back-end, so isn't vulnerable to classic request smuggling attacks. However, it is still vulnerable to request tunnelling. 
+
 asdf
+
+step 1 - find the tunnel
+
+search present, looks reflected input
+- reflected in URL
+- search allows HEAD, custom headers
+- search HEAD is paddable
+- can't pad too far - eventually hit request path too long error
+- max pad - CL 5387
+
+login doesn't work for us
+
+post has comments, can anon submit
+- probably our vector for getting info out?
+
+index allows POST, HEAD
+- custom headers
+
+finally hit some movement - headers can be injected in the name, not the value
+- spent all my time doing it in the value portion
+
+needed to add the session into the headers we injected to get around csrf not found error
+
+now we need to find a valid CL to get back all headers
+- 200 too short
+- 300 too long
+- 250 works
+- 275 too long
+- 265 too long
+- 260 too long
+- 257 works
+- 258 magic number
+
+full headers:
+```
+Content-Length: 3
+cookie: session=EM5LxGf0OZvhC3YzNkfaWRVgz0yMX5uM
+X-SSL-VERIFIED: 0
+X-SSL-CLIENT-CN: null
+X-FRONTEND-KEY: 5146657325079251
+x=1
+```
+
+worth noting that the frontend key changes per machine boot
+- SSL headers don't do much, frontend key is the only one we need
+
+now that we have that, we can try to tunnel to /
+- current stick - trying to find a way around the invalid request error I'm getting from the front end
+
+ayyyy tunneled the search to itself
+
+step 2 - hit admin
+
+first attempt at hitting /admin gave a timeout, means the HEAD CL was too long for the GET
+same thing with a short padded search, might have to find smaller?
+
+trying a JS file that's 1515 CL
+that gives us a hit - our CL is 2776 for the /admin endpoint
+
+new problem - we get a 401 Unauthorized for the frontend request, might need a session?
+- just adding a random session still sends 401 unauth
+- have to find a way to have the admin cookie returned
+
+nevermind, that's where the SSL client auth headers comes in
+- needed to add a \r\n\r\n sequence to the end of the header to get it to drop, something was interfering with our auth headers otherwise
+
+now we need to find a combo of resource + padding that grabs us the full admin page
+- the CL from the 200 OK shows 2393
+- 3397 seems to be the lowest I can get the search
+
+3397 is ok, because the response headers count as text as far as the CL is concerned
+- can now clearly see the `/admin/delete?username=carlos` URL
+
+step 3 - delete carlos
+
+now for the easy part - just edit the tunneled request to have a delete call
 
 ## 0x14: Web cache poisoning via HTTP/2 request tunnelling
 
