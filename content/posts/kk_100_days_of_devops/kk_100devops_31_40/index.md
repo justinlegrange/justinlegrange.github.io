@@ -32,9 +32,10 @@ cover:
 
 ## Intro
 
+
 ## Day 31: Git Stash
 
-Prompt:
+> [!DANGER] Problem Prompt
 > The Nautilus application development team was working on a git repository /usr/src/kodekloudrepos/media present on Storage server in Stratos DC. One of the developers stashed some in-progress changes in this repository, but now they want to restore some of the stashed changes. Find below more details to accomplish this task:  
 > 
 > Look for the stashed changes under /usr/src/kodekloudrepos/media git repository, and restore the stash with stash@{1} identifier. Further, commit and push your changes to the origin.
@@ -98,7 +99,7 @@ To /opt/media.git
 
 ## Day 32: Git Rebase
 
-Prompt:
+> [!DANGER] Problem Prompt
 > The Nautilus application development team has been working on a project repository /opt/apps.git. This repo is cloned at /usr/src/kodekloudrepos on storage server in Stratos DC. They recently shared the following requirements with DevOps team:  
 > 
 > One of the developers is working on feature branch and their work is still in progress, however there are some changes which have been pushed into the master branch, the developer now wants to rebase the feature branch with the master branch without loosing any data from the feature branch, also they don't want to add any merge commit by simply merging the master branch into the feature branch. Accomplish this task as per requirements mentioned.  
@@ -176,7 +177,7 @@ To /opt/demo.git
 
 ## Day 33: Resolve Git Merge Conflicts
 
-Prompt:
+> [!DANGER] Problem Prompt
 > Sarah and Max were working on writting some stories which they have pushed to the repository. Max has recently added some new changes and is trying to push them to the repository but he is facing some issues. Below you can find more details:  
 >   
 > SSH into storage server using user max and password Max_pass123. Under /home/max you will find the story-blog repository. Try to push the changes to the origin repo and fix the issues. The story-index.txt must have titles for all 4 stories. Additionally, there is a typo in The Lion and the Mooose line where Mooose should be Mouse.  
@@ -254,7 +255,7 @@ To http://git.stratos.xfusioncorp.com/sarah/story-blog.git
 
 ## Day 34: Git Hook
 
-Prompt:
+> [!DANGER] Problem Prompt
 > The Nautilus application development team was working on a git repository /opt/apps.git which is cloned under /usr/src/kodekloudrepos directory present on Storage server in Stratos DC. The team want to setup a hook on this repository, please find below more details:  
 >  
 > Merge the feature branch into the master branch, but before pushing your changes complete below point.  
