@@ -1,7 +1,7 @@
 baseURL: "https://justinlegrange.github.io/"
 title: J. LeGrange
 pagination.pagerSize: 5
-theme: PaperMod
+theme: ["hugo-admonitions", "PaperMod"]
 
 enableEmoji: true
 
