@@ -886,6 +886,26 @@ now for the easy part - just edit the tunneled request to have a delete call
 
 ## 0x14: Web cache poisoning via HTTP/2 request tunnelling
 
+Prompt:
+> This lab is vulnerable to request smuggling because the front-end server downgrades HTTP/2 requests and doesn't consistently sanitize incoming headers.
+> 
+> To solve the lab, poison the cache in such a way that when the victim visits the home page, their browser executes alert(1). A victim user will visit the home page every 15 seconds.
+> 
+> The front-end server doesn't reuse the connection to the back-end, so isn't vulnerable to classic request smuggling attacks. However, it is still vulnerable to request tunnelling. 
+
+step 1 - find the tunnel
+
+homepage length - CL: 8774
+minimum search length - using [ - CL: 3310
+
+
+step 2 - insert tunneled response into the cache
+step 2a - figure out cache key
+- head and get are treated the same, so unkeyed
+
+step 3 - make the tunnel have a XSS payload
+search is doing entity encoding
+
 asdf
 
 ## 0x15: Client-side desync
