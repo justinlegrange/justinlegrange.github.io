@@ -46,8 +46,7 @@ cover:
 
 ## Day 18: Configure LAMP Server
 
-Prompt:
-
+> [!QUOTE] Problem Prompt
 > xFusionCorp Industries is planning to host a WordPress website on their infra in Stratos Datacenter. They have already done infrastructure configuration—for example, on the storage server they already have a shared directory /vaw/www/html that is mounted on each app host under /var/www/html directory. Please perform the following steps to accomplish the task:  
 > 
 > a. Install httpd, php and its dependencies on all app hosts.  
@@ -139,8 +138,7 @@ Remote connection: https://mariadb.com/docs/server/mariadb-quickstart-guides/mar
 
 ## Day 19: Install and Configure Web Application
 
-Prompt:
-
+> [!QUOTE] Problem Prompt
 > xFusionCorp Industries is planning to host two static websites on their infra in Stratos Datacenter. The development of these websites is still in-progress, but we want to get the servers ready. Please perform the following steps to accomplish the task:
 >  
 > a. Install httpd package and dependencies on app server 3.  
@@ -161,8 +159,7 @@ sudo cp -r cluster /var/www/html/cluster
 
 ## Day 20: Configure Nginx + PHP-FPM Using Unix Sock
 
-Prompt:
-
+> [!QUOTE] Problem Prompt
 > The Nautilus application development team is planning to launch a new PHP-based application, which they want to deploy on Nautilus infra in Stratos DC. The development team had a meeting with the production support team and they have shared some requirements regarding the infrastructure. Below are the requirements they shared:  
 > 
 > a. Install nginx on app server 2 , configure it to use port 8093 and its document root should be /var/www/html.  
@@ -171,8 +168,6 @@ Prompt:
 > d. Once configured correctly, you can test the website using curl http://stapp02:8093/index.php command from jump host.  
 >   
 > NOTE: We have copied two files, index.php and info.php, under /var/www/html as part of the PHP-based application setup. Please do not modify these files.
-
-
 
 
 ssh steve@stapp02

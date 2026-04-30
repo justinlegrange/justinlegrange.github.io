@@ -1,5 +1,5 @@
 ---
-title: "My 1st post"
+title: "Portswigger Web Academy: Host Header Attacks"
 date: 2025-12-02 # YYYY-MM-DD
 description: "Desc Text."
 # weight: 1

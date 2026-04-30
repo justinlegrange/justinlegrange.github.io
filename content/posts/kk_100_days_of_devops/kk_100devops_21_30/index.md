@@ -36,8 +36,7 @@ cover:
 
 ## Day 21: Set Up Git Repository on Storage Server
 
-Prompt:
-
+> [!QUOTE] Problem Prompt
 > The Nautilus development team has provided requirements to the DevOps team for a new application development project, specifically requesting the establishment of a Git repository. Follow the instructions below to create the Git repository on the Storage server in the Stratos DC:  
 >  
 > 1. Utilize yum to install the git package on the Storage Server.  
@@ -57,7 +56,7 @@ Then, navigate to the directory and initialize the repo!
 
 ## Day 22: Clone Git Repository on Storage Server
 
-Prompt:
+> [!QUOTE] Problem Prompt
 > The DevOps team established a new Git repository last week, which remains unused at present. However, the Nautilus application development team now requires a copy of this repository on the Storage Server in the Stratos DC. Follow the provided details to clone the repository:
 > 
 > 1. The repository to be cloned is located at /opt/cluster.git  
@@ -72,7 +71,7 @@ This is another straightforward one - SSH into the storage server as `natasha`, 
 
 ## Day 23: Fork a Git Repository
 
-Prompt:
+> [!QUOTE] Problem Prompt
 > There is a Git server utilized by the Nautilus project teams. Recently, a new developer named Jon joined the team and needs to begin working on a project. To begin, he must fork an existing Git repository. Follow the steps below:
 >  
 > 1. Click on the Gitea UI button located on the top bar to access the Gitea page.
@@ -93,7 +92,7 @@ Once you click the "
 
 ## Day 24: Git Create Branches
 
-Prompt:
+> [!QUOTE] Problem Prompt
 > Nautilus developers are actively working on one of the project repositories, /usr/src/kodekloudrepos/cluster. Recently, they decided to implement some new features in the application, and they want to maintain those new changes in a separate branch. Below are the requirements that have been shared with the DevOps team:
 >  
 > On Storage server in Stratos DC create a new branch xfusioncorp_cluster from master branch in /usr/src/kodekloudrepos/cluster git repo.  
@@ -124,7 +123,7 @@ git checkout [<branch>]
 
 ## Day 25: Git Merge Branches
 
-Prompt:
+> [!QUOTE] Problem Prompt
 > The Nautilus application development team has been working on a project repository /opt/blog.git. This repo is cloned at /usr/src/kodekloudrepos on storage server in Stratos DC. They recently shared the following requirements with DevOps team:
 >  
 > Create a new branch datacenter in /usr/src/kodekloudrepos/blog repo from master and copy the /tmp/index.html file (present on storage server itself) into the repo. Further, add/commit this file in the new branch and merge back that branch into master branch. Finally, push the changes to the origin for both of the branches.
@@ -173,7 +172,7 @@ Incorporates changes from the named commits (since the time their histories dive
 
 ## Day 26: Git Manage Remotes
 
-Prompt:
+> [!QUOTE] Problem Prompt
 > The xFusionCorp development team added updates to the project that is maintained under /opt/beta.git repo and cloned under /usr/src/kodekloudrepos/beta. Recently some changes were made on Git server that is hosted on Storage server in Stratos DC. The DevOps team added some new Git remotes, so we need to update remote on /usr/src/kodekloudrepos/beta repository as per details mentioned below:
 > 
 > a. In /usr/src/kodekloudrepos/beta repo add a new remote dev_beta and point it to /opt/xfusioncorp_beta.git repository.  
@@ -203,7 +202,7 @@ so:
 
 ## Day 27: Git Revert Some Changes
 
-Prompt:
+> [!QUOTE] Problem Prompt
 > The Nautilus application development team was working on a git repository /usr/src/kodekloudrepos/blog present on Storage server in Stratos DC. However, they reported an issue with the recent commits being pushed to this repo. They have asked the DevOps team to revert repo HEAD to last commit. Below are more details about the task:  
 >  
 > In /usr/src/kodekloudrepos/blog git repository, revert the latest commit ( HEAD ) to the previous commit (JFYI the previous commit hash should be with initial commit message ).  
@@ -277,7 +276,7 @@ So it looks like that difference between reverting and resetting matters after a
 
 ## Day 28: Git Cherry Pick
 
-Prompt:
+> [!QUOTE] Problem Prompt
 > The Nautilus application development team has been working on a project repository /opt/apps.git. This repo is cloned at /usr/src/kodekloudrepos on storage server in Stratos DC. They recently shared the following requirements with the DevOps team:  
 >  
 > There are two branches in this repository, master and feature. One of the developers is working on the feature branch and their work is still in progress, however they want to merge one of the commits from the feature branch to the master branch, the message for the commit that needs to be merged into master is Update info.txt. Accomplish this task for them, also remember to push your changes eventually.  
@@ -397,7 +396,7 @@ we see commit # `76c73ae00c3468baae335769d2121c7385317040` has our changes
 
 ## Day 29: Manage Git Pull Requests
 
-Prompt:
+> [!QUOTE] Problem Prompt
 > Max want to push some new changes to one of the repositories but we don't want people to push directly to master branch, since that would be the final version of the code. It should always only have content that has been reviewed and approved. We cannot just allow everyone to directly push to the master branch. So, let's do it the right way as discussed below:  
 > 
 > SSH into storage server using user max, password Max_pass123 . There you can find an already cloned repo under Max user's home.  
@@ -488,7 +487,7 @@ click green "merge" button and you're all set
 
 ## Day 30: Git Hard Reset
 
-Prompt:
+> [!QUOTE] Problem Prompt
 > The Nautilus application development team was working on a git repository /usr/src/kodekloudrepos/official present on Storage server in Stratos DC. This was just a test repository and one of the developers just pushed a couple of changes for testing, but now they want to clean this repository along with the commit history/work tree, so they want to point back the HEAD and the branch itself to a commit with message add data.txt file. Find below more details:  
 > 
 > In /usr/src/kodekloudrepos/official git repository, reset the git commit history so that there are only two commits in the commit history i.e initial commit and add data.txt file.  

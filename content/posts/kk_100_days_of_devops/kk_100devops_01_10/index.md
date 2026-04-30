@@ -42,6 +42,7 @@ With that said - let's get started!
 
 ## Day 1: User with Non-Interactive Shell
 
+> [!QUOTE] Problem Prompt
 > To accommodate the backup agent tool's specifications, the system admin team at xFusionCorp Industries requires the creation of a user with a non-interactive shell. Here's your task:  
 > 
 > Create a user named mark with a non-interactive shell on App Server 3.
@@ -87,6 +88,7 @@ mark:x:1002:1002::/home/mark:/sbin/nologin
 
 ## Day 2: Temp User with Expiry
 
+> [!QUOTE] Problem Prompt
 > As part of the temporary assignment to the Nautilus project, a developer
 named anita requires access for a limited duration. To ensure smooth
 access management, a temporary user account with an expiry date is needed.
@@ -122,6 +124,7 @@ Number of days of warning before password expires       : 7
 
 ## Day 3: Secure Root SSH Access
 
+> [!QUOTE] Problem Prompt
 > Following security audits, the xFusionCorp Industries security team has rolled
 out new protocols, including the restriction of direct root SSH login.
 >
@@ -142,6 +145,7 @@ To verify changes, we can try to SSH with the root account and be denied. Repeat
 
 ## Day 4: Script Execution Permissions
 
+> [!QUOTE] Problem Prompt
 > In a bid to automate backup processes, the xFusionCorp Industries sysadmin team has developed a new bash script named xfusioncorp.sh. While the script has been distributed to all necessary servers, it lacks executable permissions on App Server 1 within the Stratos Datacenter.
 >
 > Your task is to grant executable permissions to the /tmp/xfusioncorp.sh script on App Server 1. Additionally, ensure that all users have the capability to execute it.
@@ -157,6 +161,7 @@ perm denied error
 
 ## Day 5: SELinux Install && Configuration
 
+> [!QUOTE] Problem Prompt
 > Following a security audit, the xFusionCorp Industries security team has opted to enhance application and server security with SELinux. To initiate testing, the following requirements have been established for App server 2 in the Stratos Datacenter:
 >
 > 1. Install the required SELinux packages.  
@@ -190,6 +195,7 @@ verify: egrep -i '^selinux=' /etc/selinux/config
 
 ## Day 6: Create Cron Job
 
+> [!QUOTE] Problem Prompt
 > The Nautilus system admins team has prepared scripts to automate several day-to-day tasks. They want them to be deployed on all app servers in Stratos DC on a set schedule. Before that they need to test similar functionality with a sample cron job. Therefore, perform the steps below:
 > 
 > a. Install cronie package on all Nautilus app servers and start crond service.  
@@ -212,6 +218,7 @@ alternatively sudo ls /var/spool/cron/ to see the individual crontabs
 
 ## Day 7: Linux SSH Authentication
 
+> [!QUOTE] Problem Prompt
 > The system admins team of xFusionCorp Industries has set up some scripts on jump host that run on regular intervals and perform operations on all app servers in Stratos Datacenter. To make these scripts work properly we need to make sure the thor user on jump host has password-less SSH access to all app servers through their respective sudo users (i.e tony for app server 1). Based on the requirements, perform the following:
 >  
 > Set up a password-less authentication from user thor on jump host to all app servers through their respective sudo users.
@@ -234,6 +241,7 @@ do this for all hosts
 
 ## Day 8: Install Ansible
 
+> [!QUOTE] Problem Prompt
 > During the weekly meeting, the Nautilus DevOps team discussed about the automation and configuration management solutions that they want to implement. While considering several options, the team has decided to go with Ansible for now due to its simple setup and minimal pre-requisites. The team wanted to start testing using Ansible, so they have decided to use jump host as an Ansible controller to test different kind of tasks on rest of the servers.
 > 
 > Install ansible version 4.8.0 on Jump host using pip3 only. Make sure Ansible binary is available globally on this system, i.e all users on this system are able to run Ansible commands.
@@ -247,6 +255,7 @@ Done!
 
 ## Day 9: MariaDB Troubleshooting
 
+> [!QUOTE] Problem Prompt
 > There is a critical issue going on with the Nautilus application in Stratos DC. The production support team identified that the application is unable to connect to the database. After digging into the issue, the team found that mariadb service is down on the database server.
 > 
 > Look into the issue and fix the same.
@@ -270,6 +279,7 @@ systemctl status mariadb to verify the fix worked!
 
 ## Day 10: Linux Bash Scripts
 
+> [!QUOTE] Problem Prompt
 > The production support team of xFusionCorp Industries is working on developing some bash scripts to automate different day to day tasks. One is to create a bash script for taking websites backup. They have a static website running on App Server 1 in Stratos Datacenter, and they need to create a bash script named media_backup.sh which should accomplish the following tasks. (Also remember to place the script under /scripts directory on App Server 1).
 > 
 > a. Create a zip archive named xfusioncorp_media.zip of /var/www/html/media directory.  
