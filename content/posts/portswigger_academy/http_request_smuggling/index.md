@@ -44,9 +44,29 @@ Labs: https://portswigger.net/web-security/all-labs#http-request-smuggling
 > 
 > Although the lab supports HTTP/2, the intended solution requires techniques that are only possible in HTTP/1. You can manually switch protocols in Burp Repeater from the Request attributes section of the Inspector panel.
 
+For the first lab, this one is relatively straightforward. To discover the vulnerability, we're sending a smuggled request fragment that will see if the front end uses the `Content-Length` or `Transfer-Encoding` header as its source of truth. If it ignores the CL and respects the TE header, it will see two complete requests with a body of A; if it respects it and ignores the TE, it's going to forward the "complete" request over to the backend, which will get a request with a body that starts, but never ends. We'll see a timeout and then be on our way to smuggling a request successfully.
 
-asdf
+The test request we'll send is going to look something like this when all is said and done:
 
+![CL.TE Timeout Request](images/0x01/cl-te-timeout-test.png#center)
+
+To set this up, we'll want to do a few things - grab any request (I use one to the homepage) and send it to Repeater. Under the Inspector window, change the HTTP version from `HTTP/2` to `HTTP/1.1` and send the request to make sure it accepts it. I also like to minify the request, just to clean up all the unnecessary headers that get added by browsers, etc.
+
+Now we need to set up the `CL.TE` smoke test - in the Repeater window, click the gear cog icon and uncheck the "Update Content-Length" to stop Burp from automatically updating the header as we add content. Set the `Content-Length` to 3 and send the request:
+
+![CL.TE Timeout Success](images/0x01/server-timeout.png#center)
+
+As expected, we no longer see the timeout - meaning that if we re-check the "Update Content-Length" header and let it update the `Content-Length` to include the whole request body, it shouldn't serve us the timeout any more:
+
+![CL.TE Timeout Fixed](images/0x01/server-timeout-fix.png#center)
+
+Now that we've identified how the headers are being processed, we can build a smuggled request that causes the next request in the series to return a `404 Not Found` response. To do so, we tack a request fragment on to what we already have - all we need is the method, path, HTTP version, and a dangling header to handle the incoming request line. Once we do that, it should look like this (with the follow-up request shown in green):
+
+![CL.TE Request Smuggled](images/0x01/cl-te-smuggle-final.png#center)
+
+So now, we just have to build and send the request twice to get our `404 Not Found` response. Note that in setting up the request, we no longer leave a trailing `\r\n` at the end of the request. If that gets left in the body, the dangling `Foo: x` header won't catch the first line of the incoming request, leaving us with the backend returning `200 OK`s with each request.
+
+![CL.TE Request Smuggled](images/0x01/request-smuggled-test.png#center)
 
 ## 0x02: HTTP request smuggling, confirming a TE.CL vulnerability via differential responses
 
@@ -58,9 +78,15 @@ asdf
 > 
 > Although the lab supports HTTP/2, the intended solution requires techniques that are only possible in HTTP/1. You can manually switch protocols in Burp Repeater from the Request attributes section of the Inspector panel.
 
+This lab is roughly as straightforward as the CL.TE one - this time, we need to confirm that the frontend uses the `Transfer-Encoding` header instead of the `Content-Length` one. The best way to test this is to send a fragmented requst - one that the CL fully contains, but the TE shows as invalid. Doing so will cause the frontend to timeout while it waits for more data to come in, and is set up like this:
+
+![TE.CL Request Smuggling test request setup](images/0x02/te-cl-smuggle-test.png#center)
+
+roughly same process as last time - take homepage req, minify, convert to post
 
 struggled a lot with getting the right length on this one - easiest way is to set up a scratch pad for the current req + the next one and highlight to get lengths calculated by burp
 
+![Burp hex calculation for TE.CL smuggling request length](images/0x02/burp-hex-calculation.png#center)
 
 final:
 ```http

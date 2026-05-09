@@ -21,8 +21,8 @@ params:
   keywords: [Blog, Portfolio, InfoSec, DevOps]
   author: Justin LeGrange
   DateFormat: "January 2, 2006"
-  defaultTheme: auto # dark, light
-  disableThemeToggle: false
+  defaultTheme: dark # dark, light
+  disableThemeToggle: true
 
   ShowReadingTime: true
   ShowShareButtons: true
