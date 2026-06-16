@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://justinlegrange.github.io/sitemap.xml
