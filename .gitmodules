@@ -4,3 +4,7 @@
 [submodule "themes/hugo-admonitions"]
 	path = themes/hugo-admonitions
 	url = git@github.com:KKKZOZ/hugo-admonitions.git
+[submodule "themes/blowfish"]
+	path = themes/blowfish
+	url = https://github.com/nunocoracao/blowfish.git
+	branch = main
