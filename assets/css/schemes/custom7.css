@@ -1,0 +1,37 @@
+/* FUGU GENERATION: ./index.js  generate 888888 fb660a 111111
+888888 F2613F 111111
+Replaced with some of the colors from conga
+*/
+
+:root { --color-neutral: 255, 255, 255;
+  --color-neutral-50: 250, 250, 250;
+  --color-neutral-100: 244, 244, 245;
+  --color-neutral-200: 228, 228, 231;
+  --color-neutral-300: 212, 212, 216;
+  --color-neutral-400: 161, 161, 170;
+  --color-neutral-500: 113, 113, 122;
+  --color-neutral-600: 82, 82, 91;
+  --color-neutral-700: 63, 63, 70;
+  --color-neutral-800: 39, 39, 42;
+  --color-neutral-900: 24, 24, 27;
+--color-primary-50:     255,255,255;
+--color-primary-100:    255,255,255;
+--color-primary-200:    255,243,236;
+--color-primary-300:    253,196,161;
+--color-primary-400:    252,149,85;
+--color-primary-500:    251,102,10;
+--color-primary-600:    217,85,4;
+--color-primary-700:    177,69,3;
+--color-primary-800:    136,53,2;
+--color-primary-900:    96,38,2;
+  --color-secondary-50: 245, 243, 255;
+  --color-secondary-100: 237, 233, 254;
+  --color-secondary-200: 221, 214, 254;
+  --color-secondary-300: 196, 181, 253;
+  --color-secondary-400: 167, 139, 250;
+  --color-secondary-500: 139, 92, 246;
+  --color-secondary-600: 124, 58, 237;
+  --color-secondary-700: 109, 40, 217;
+  --color-secondary-800: 91, 33, 182;
+  --color-secondary-900: 76, 29, 149;
+}

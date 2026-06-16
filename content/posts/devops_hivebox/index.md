@@ -6,7 +6,7 @@ description: "Desc Text."
 # aliases: ["/first"]
 draft: true
 # series: ["DevOps Project: Hivebox"]
-categories: ["themes", "syntax"]
+categories: ["DevOps"]
 tags: ["first"]
 showToc: true
 TocOpen: false

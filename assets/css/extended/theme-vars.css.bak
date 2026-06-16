@@ -1,0 +1,61 @@
+/* Width change: https://github.com/adityatelange/hugo-PaperMod/discussions/442 */
+:root {
+    --main-width: 60%;
+    --code-block-bg: unset;
+    --code-bg: unset;
+}
+
+:root[data-theme="dark"] {
+    --theme: rgb(29, 30, 32);
+    --entry: rgb(46, 46, 51);
+    --primary: rgb(218, 218, 219);
+    --secondary: rgb(155, 156, 157);
+    --tertiary: rgb(65, 66, 68);
+    --content: rgb(196, 196, 197);
+    --code-block-bg: #111;
+    --code-bg: #111;
+    --border: rgb(51, 51, 51);
+    color-scheme: dark;
+}
+
+
+.copy-code {
+    background: #fb660a;
+}
+
+.post-title {
+    /* background: #ffaa00; */
+    background: linear-gradient(180deg,rgba(255, 170, 0, 1) 0%, rgba(245, 117, 78, 1) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    justify-content: center;
+    align-items: center;
+}
+
+.page-header :is(h1,svg) {
+    /* background: #ffaa00; */
+    background: linear-gradient(180deg,rgba(255, 170, 0, 1) 0%, rgba(245, 117, 78, 1) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    justify-content: center;
+    align-items: center;
+}
+
+.post-description {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.profile_inner h1 {
+    /* background: #ffaa00; */
+    background: linear-gradient(180deg,rgba(255, 170, 0, 1) 0%, rgba(245, 117, 78, 1) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    justify-content: center;
+    align-items: center;
+}
