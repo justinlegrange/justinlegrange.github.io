@@ -1,33 +1,12 @@
 ---
 title: "KodeKloud's 100 Days of MLOps: Days 1 - 10"
-date: 2025-05-11 # YYYY-MM-DD
-description: "A walkthrough for days 1 through 10 of KodeKloud's 100 Days of DevOps challenges."
-# weight: 1
-# aliases: ["/first"]
+date: 2026-05-11 # YYYY-MM-DD
+lastMod: 2026-06-24
+summary: "A walkthrough for days 1 through 10 of KodeKloud's 100 Days of MLOps challenges."
 draft: true
 series: ["KodeKloud's 100 Days of MLOps"]
-categories: ["MLOps", "KodeKloud", "LLMs"]
+categories: ["DevOps", "MLOps", "KodeKloud"]
 tags: ["devops", "mlops", "kodekloud", "llms", "python"]
-showToc: true
-TocOpen: false
-hidemeta: false
-disableHLJS: true # to disable highlightjs
-disableShare: false
-hideSummary: true
-searchHidden: true
-ShowReadingTime: true
-ShowBreadCrumbs: false
-ShowPostNavLinks: true
-ShowWordCount: false
-ShowRssButtonInSectionTermList: true
-UseHugoToc: true
-cover:
-    image: "<image path/url>" # image path/url
-    alt: "<alt text>" # alt text
-    caption: "<text>" # display caption under cover
-    relative: false # when using page bundles set this to true
-    hidden: false # only hide on current single page
-    cover.responsiveImages: true
 ---
 
 ## Intro
@@ -58,3 +37,39 @@ If you've used Python for any sort of development before, this workflow should f
 $ pip install numpy pandas scikit-learn matplotlib
 $ pip freeze > requirements.txt
 ```
+
+## Day 2: Set Up and Configure Jupyter Notebook Server
+
+Placeholder.
+
+## Day 3: Fix a Broken uv Lockfile Specification
+
+Placeholder.
+
+## Day 4: Create a Standard ML Project Structure
+
+Placeholder.
+
+## Day 5: Create a Makefile for ML Workflow Automation
+
+Placeholder.
+
+## Day 6: Set Up Code Quality Tools for ML Code
+
+Placeholder.
+
+## Day 7: Package an ML Project as Installable Python Package
+
+Placeholder.
+
+## Day 8: Configure Pre-Commit Hooks for ML Repository
+
+Placeholder.
+
+## Day 9: Create a Custom ML Project Template with Cookiecutter
+
+Placeholder.
+
+## Day 10: Install and Initialize DVC in an ML Project
+
+Placeholder.

@@ -1,33 +1,13 @@
 ---
 title: "KodeKloud's 100 Days of DevOps: Day 21 - 30"
 date: 2026-01-03 # YYYY-MM-DD
-description: "A walkthrough for days 21 through 30 of KodeKloud's 100 Days of DevOps challenges."
-# weight: 1
-# aliases: ["/first"]
+lastMod: 2026-06-24
+summary: "A walkthrough for days 21 through 30 of KodeKloud's 100 Days of DevOps challenges."
 draft: true
 series: ["KodeKloud's 100 Days of DevOps"]
+seriesOrder: 3
 categories: ["DevOps", "KodeKloud"]
-tags: ["devops", "linux", "kodekloud"]
-showToc: true
-TocOpen: false
-hidemeta: false
-disableHLJS: true # to disable highlightjs
-disableShare: false
-hideSummary: true
-searchHidden: true
-ShowReadingTime: true
-ShowBreadCrumbs: false
-ShowPostNavLinks: true
-ShowWordCount: false
-ShowRssButtonInSectionTermList: true
-UseHugoToc: true
-cover:
-    image: "<image path/url>" # image path/url
-    alt: "<alt text>" # alt text
-    caption: "<text>" # display caption under cover
-    relative: false # when using page bundles set this to true
-    hidden: false # only hide on current single page
-    cover.responsiveImages: true
+tags: ["devops", "linux", "git"]
 ---
 
 ## Intro
@@ -41,6 +21,7 @@ cover:
 >  
 > 1. Utilize yum to install the git package on the Storage Server.  
 > 2. Create a bare repository named /opt/games.git (ensure exact name usage).  
+{icon="circle-question"}
 
 This one's pretty straightforward - all we have to do is initialize a bare git repo. First, SSH to the server and install git:
 ```
@@ -61,6 +42,7 @@ Then, navigate to the directory and initialize the repo!
 > 
 > 1. The repository to be cloned is located at /opt/cluster.git  
 > 2. Clone this Git repository to the /usr/src/kodekloudrepos directory. Perform this task using the natasha user, and ensure that no modifications are made to the repository or existing directories, such as changing permissions or making unauthorized alterations.
+{icon="circle-question"}
 
 This is another straightforward one - SSH into the storage server as `natasha`, and just clone the repository like shown:
 
@@ -79,6 +61,7 @@ This is another straightforward one - SSH into the storage server as `natasha`, 
 > 3. Once logged in, locate the Git repository named sarah/story-blog and fork it under the jon user.
 >  
 > Note: For tasks requiring web UI changes, screenshots are necessary for review purposes. Additionally, consider utilizing screen recording software such as loom.com to record and share your task completion process.
+{icon="circle-question"}
 
 This one should be very easy - all of the work will be done via the Gitea UI, no CLI necessary. First, sign in as `jon` on the site:
 
@@ -97,7 +80,7 @@ Once you click the "
 >  
 > On Storage server in Stratos DC create a new branch xfusioncorp_cluster from master branch in /usr/src/kodekloudrepos/cluster git repo.  
 > Please do not try to make any changes in the code.
-
+{icon="circle-question"}
 
 checked the man page, saw this:
 ```
@@ -127,7 +110,7 @@ git checkout [<branch>]
 > The Nautilus application development team has been working on a project repository /opt/blog.git. This repo is cloned at /usr/src/kodekloudrepos on storage server in Stratos DC. They recently shared the following requirements with DevOps team:
 >  
 > Create a new branch datacenter in /usr/src/kodekloudrepos/blog repo from master and copy the /tmp/index.html file (present on storage server itself) into the repo. Further, add/commit this file in the new branch and merge back that branch into master branch. Finally, push the changes to the origin for both of the branches.
-
+{icon="circle-question"}
 
 ```
 thor@jumphost ~$ ssh natasha
@@ -178,6 +161,7 @@ Incorporates changes from the named commits (since the time their histories dive
 > a. In /usr/src/kodekloudrepos/beta repo add a new remote dev_beta and point it to /opt/xfusioncorp_beta.git repository.  
 > b. There is a file /tmp/index.html on same server; copy this file to the repo and add/commit to master branch.  
 > c. Finally push master branch to this new remote origin.
+{icon="circle-question"}
 
 asdf
 
@@ -207,6 +191,7 @@ so:
 >  
 > In /usr/src/kodekloudrepos/blog git repository, revert the latest commit ( HEAD ) to the previous commit (JFYI the previous commit hash should be with initial commit message ).  
 > Use revert blog message (please use all small letters for commit message) for the new revert commit.
+{icon="circle-question"}
 
 asdf
 
@@ -280,6 +265,7 @@ So it looks like that difference between reverting and resetting matters after a
 > The Nautilus application development team has been working on a project repository /opt/apps.git. This repo is cloned at /usr/src/kodekloudrepos on storage server in Stratos DC. They recently shared the following requirements with the DevOps team:  
 >  
 > There are two branches in this repository, master and feature. One of the developers is working on the feature branch and their work is still in progress, however they want to merge one of the commits from the feature branch to the master branch, the message for the commit that needs to be merged into master is Update info.txt. Accomplish this task for them, also remember to push your changes eventually.  
+{icon="circle-question"}
 
 thor@jumphost ~$ ssh natasha@ststor01
 [natasha@ststor01 ~]$ cd /usr/src/kodekloudrepos/apps
@@ -430,6 +416,7 @@ we see commit # `76c73ae00c3468baae335769d2121c7385317040` has our changes
 > Great stuff!! The story has been merged! 👏  
 > 
 > Note: For these kind of scenarios requiring changes to be done in a web UI, please take screenshots so that you can share it with us for review in case your task is marked incomplete. You may also consider using a screen recording software such as loom.com to record and share your work.
+{icon="circle-question"}
 
 ```
 max $ ls
@@ -492,6 +479,7 @@ click green "merge" button and you're all set
 > 
 > In /usr/src/kodekloudrepos/official git repository, reset the git commit history so that there are only two commits in the commit history i.e initial commit and add data.txt file.  
 > Also make sure to push your changes.
+{icon="circle-question"}
 
 ```
 thor@jumphost ~$ ssh natasha@ststor01

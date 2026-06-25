@@ -1,33 +1,13 @@
 ---
 title: "Building the Hivebox: End-to-End DevOps"
 date: 2026-01-22 # YYYY-MM-DD
-description: "Desc Text."
-# weight: 1
-# aliases: ["/first"]
+lastMod: 2026-06-24
+summary: "The introduction post for my Hivebox project, a DevOps project that focuses on building an API end-to-end while maintaining scalability and ease of maintenance."
 draft: true
 # series: ["DevOps Project: Hivebox"]
-categories: ["DevOps"]
-tags: ["first"]
-showToc: true
-TocOpen: false
-hidemeta: false
-disableHLJS: true # to disable highlightjs
-disableShare: false
-hideSummary: true
-searchHidden: true
-ShowReadingTime: true
-ShowBreadCrumbs: false
-ShowPostNavLinks: true
-ShowWordCount: false
-ShowRssButtonInSectionTermList: true
-UseHugoToc: true
-cover:
-    image: "<image path/url>" # image path/url
-    alt: "<alt text>" # alt text
-    caption: "<text>" # display caption under cover
-    relative: false # when using page bundles set this to true
-    hidden: false # only hide on current single page
-    cover.responsiveImages: true
+# seriesOrder: 1
+categories: ["DevOps", "Projects"]
+tags: ["devops", "kubernetes", "go", "docker"]
 ---
 
 # Introduction

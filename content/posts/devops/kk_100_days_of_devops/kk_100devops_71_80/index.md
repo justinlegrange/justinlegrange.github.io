@@ -1,53 +1,54 @@
 ---
 title: "KodeKloud's 100 Days of DevOps: Day 71 - 80"
 date: 2025-12-02 # YYYY-MM-DD
-description: "Desc Text."
-# weight: 1
-# aliases: ["/first"]
+lastMod: 2026-06-24
+summary: "A walkthrough for days 71 through 80 of KodeKloud's 100 Days of DevOps challenges."
 draft: true
 series: ["KodeKloud's 100 Days of DevOps"]
-categories: ["themes", "syntax"]
-tags: ["first"]
-showToc: true
-TocOpen: false
-hidemeta: false
-disableHLJS: true # to disable highlightjs
-disableShare: false
-hideSummary: true
-searchHidden: true
-ShowReadingTime: true
-ShowBreadCrumbs: false
-ShowPostNavLinks: true
-ShowWordCount: false
-ShowRssButtonInSectionTermList: true
-UseHugoToc: true
-cover:
-    image: "<image path/url>" # image path/url
-    alt: "<alt text>" # alt text
-    caption: "<text>" # display caption under cover
-    relative: false # when using page bundles set this to true
-    hidden: false # only hide on current single page
-    cover.responsiveImages: true
+categories: ["DevOps", "KodeKloud"]
+tags: ["devops", "linux", "jenkins"]
 ---
 
 ## Intro
 
+Placeholder.
+
 ## Day 71: Configure Jenkins Job for Package Installation
+
+Placeholder.
 
 ## Day 72: Jenkins Parameterized Builds
 
+Placeholder.
+
 ## Day 73: Jenkins Scheduled Jobs
+
+Placeholder.
 
 ## Day 74: Jenkins Database Backup Job
 
+Placeholder.
+
 ## Day 75: Jenkins Slave Nodes
+
+Placeholder.
 
 ## Day 76: Jenkins Project Security
 
+Placeholder.
+
 ## Day 77: Jenkins Deploy Pipeline
+
+Placeholder.
 
 ## Day 78: Jenkins Conditional Pipeline
 
+Placeholder.
+
 ## Day 79: Jenkins Deployment Job
 
+Placeholder.
+
 ## Day 80: Jenkins Chained Builds
+
+Placeholder.

@@ -2,34 +2,12 @@
 title: "KodeKloud's 100 Days of DevOps: Days 1 - 10"
 date: 2025-12-16 # YYYY-MM-DD
 lastmod: 2026-06-05
-description: "A walkthrough for days 1 through 10 of KodeKloud's 100 Days of DevOps challenges."
 summary: "A walkthrough for days 1 through 10 of KodeKloud's 100 Days of DevOps challenges."
-# weight: 1
-# aliases: ["/first"]
 draft: true
 series: ["KodeKloud's 100 Days of DevOps"]
+seriesOrder: 1
 categories: ["DevOps", "KodeKloud", "Sysadmin"]
 tags: ["devops", "linux", "kodekloud", "bash", "sysadmin", "cron"]
-showToc: true
-TocOpen: false
-hidemeta: false
-# disableHLJS: false # to disable highlightjs
-disableShare: false
-hideSummary: true
-searchHidden: true
-ShowReadingTime: true
-ShowBreadCrumbs: false
-ShowPostNavLinks: true
-ShowWordCount: false
-ShowRssButtonInSectionTermList: true
-UseHugoToc: true
-cover:
-    image: "<image path/url>" # image path/url
-    alt: "<alt text>" # alt text
-    caption: "<text>" # display caption under cover
-    relative: false # when using page bundles set this to true
-    hidden: false # only hide on current single page
-    cover.responsiveImages: true
 ---
 
 ## Intro
@@ -241,7 +219,7 @@ int main() {
 Hello, blog readers!
 ```
 
-## Day 5: SELinux Install && Configuration
+## Day 5: SELinux Install and Configuration
 > [!QUOTE]+ Problem Prompt
 > Following a security audit, the xFusionCorp Industries security team has opted to enhance application and server security with SELinux. To initiate testing, the following requirements have been established for App server 2 in the Stratos Datacenter:
 >
@@ -251,11 +229,20 @@ Hello, blog readers!
 > 4. Disregard the current status of SELinux via the command line; the final status after the reboot should be disabled.  
 {icon="circle-question"}
 
+This is another straightforward one - we need to check if SELinux is present on the system, and if not we install it - and then make sure it's permanently in the disabled state. 
+
+Let's start by finding out what we have to work with. SSH over to the server and check on the installation status of SELinux with DNF, like so:
+
 ```console
-ssh steve@stapp02
-dnf search selinux
+[steve@stapp02 ~]$ dnf list --installed | grep -i selinux
+libselinux.x86_64                              3.6-1.el9                        @System       
+libselinux-utils.x86_64                        3.6-1.el9                        @baseos
 ```
+
+We have a few libraries already on the system, but it doesn't match the full install package name:
 ```console
+[steve@stapp02 ~]$ dnf search selinux
+[...]
 selinux-policy.noarch : SELinux policy configuration
 selinux-policy-automotive.noarch : SELinux automotive policy
 selinux-policy-devel.noarch : SELinux policy development files
@@ -264,17 +251,44 @@ selinux-policy-minimum.noarch : SELinux minimum policy
 selinux-policy-mls.noarch : SELinux MLS policy
 selinux-policy-sandbox.noarch : SELinux sandbox policy
 selinux-policy-targeted.noarch : SELinux targeted policy
+[...]
 ```
 
-man selinux: https://man7.org/linux/man-pages/man8/selinux.8.html
+So we need to grab the `selinux-policy-*` packages that match our needs. We'll default to `selinux-policy`, but it's worth investigating which one suits your use case for installs _outside_ of this lab. Install the packages with `$ sudo dnf install -y selinux-policy` and then we can work on configuring the SELinux execution policy to be set to `Disabled`.
+
+In order to do that, we need to change `/etc/selinux/config` - [here's what the manpage](https://man7.org/linux/man-pages/man8/selinux.8.html) has to say about that:
+> [!QUOTE]+ SELinux Manpage
 > The /etc/selinux/config configuration file controls whether
 > SELinux is enabled or disabled, and if enabled, whether SELinux
 > operates in permissive mode or enforcing mode.  The SELINUX
 > variable may be set to any one of disabled, permissive, or
 > enforcing to select one of these options.
 
-sudo vi /etc/selinux/config, change SELINUX to disabled
-verify: egrep -i '^selinux=' /etc/selinux/config
+So now we just need to edit the file using whichever editor you're comfortable with. It's easy to do with `sed`, so that's what I'll go with. I always start by checking the command by streaming it, and then once I'm confident it's doing the intended edit I commit the change by running it in-place on the file with `sed -i`:
+```console
+[steve@stapp02 ~]$ sed 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+# This file controls the state of SELinux on the system.
+# SELINUX= can take one of these three values:
+
+[...]
+
+#
+#    grubby --update-kernel ALL --remove-args selinux
+#
+SELINUX=disabled
+# SELINUXTYPE= can take one of these three values:
+#     targeted - Targeted processes are protected,
+#     mls - Multi Level Security protection.
+SELINUXTYPE=mls
+[steve@stapp02 ~]$ sudo sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+```
+
+Do note that by doing it with `sed`, you end up changing the comments as well - anything that matches `SELINUX=enforcing` gets swapped over, so some of the documentation in-file might not make sense afterwards. Now all that's left is verifying that our change went through using `egrep`:
+
+```console
+[steve@stapp02 ~]$ egrep -i '^selinux=' /etc/selinux/config
+SELINUX=disabled
+```
 
 ## Day 6: Create Cron Job
 > [!QUOTE]+ Problem Prompt

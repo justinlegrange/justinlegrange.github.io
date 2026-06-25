@@ -3,50 +3,80 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <url>
-    <loc>http://localhost:1313/</loc>
-    <lastmod>2026-06-05T00:00:00+00:00</lastmod>
+    <loc>http://localhost:1313/about/</loc>
+    <lastmod>2026-06-23T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>http://localhost:1313/posts/portswigger_academy/http_request_smuggling/</loc>
-    <lastmod>2026-03-13T00:00:00+00:00</lastmod>
+    <loc>http://localhost:1313/posts/hacking/htb/challenges/phonebook/</loc>
+    <lastmod>2026-06-24T00:00:00+00:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>http://localhost:1313/</loc>
+    <lastmod>2026-06-25T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://localhost:1313/posts/</loc>
-    <lastmod>2026-06-05T00:00:00+00:00</lastmod>
+    <lastmod>2026-06-25T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>http://localhost:1313/posts/portswigger_academy/information_disclosure/</loc>
-    <lastmod>2026-02-05T00:00:00+00:00</lastmod>
+    <loc>http://localhost:1313/posts/hacking/portswigger_academy/sql_injection/</loc>
+    <lastmod>2026-06-24T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>http://localhost:1313/posts/devops_hivebox/</loc>
-    <lastmod>2026-01-22T00:00:00+00:00</lastmod>
+    <loc>http://localhost:1313/posts/devops/kk_100_days_of_devops/kk_100devops_51_60/</loc>
+    <lastmod>2026-06-25T00:00:00+00:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>http://localhost:1313/posts/devops/kk_100_days_of_mlops/kk_100mlops_01_10/</loc>
+    <lastmod>2026-06-24T00:00:00+00:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>http://localhost:1313/posts/hacking/portswigger_academy/http_request_smuggling/</loc>
+    <lastmod>2026-06-24T00:00:00+00:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>http://localhost:1313/posts/hacking/portswigger_academy/information_disclosure/</loc>
+    <lastmod>2026-06-24T00:00:00+00:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>http://localhost:1313/posts/projects/devops_hivebox/</loc>
+    <lastmod>2026-06-24T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://localhost:1313/posts/devops/kk_100_days_of_devops/kk_100devops_31_40/</loc>
-    <lastmod>2026-01-07T00:00:00+00:00</lastmod>
+    <lastmod>2026-06-24T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://localhost:1313/posts/devops/kk_100_days_of_devops/kk_100devops_21_30/</loc>
-    <lastmod>2026-01-03T00:00:00+00:00</lastmod>
+    <lastmod>2026-06-24T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://localhost:1313/posts/devops/kk_100_days_of_devops/kk_100devops_11_20/</loc>
-    <lastmod>2025-12-31T00:00:00+00:00</lastmod>
+    <lastmod>2026-06-24T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -58,72 +88,49 @@
   </url>
   <url>
     <loc>http://localhost:1313/posts/devops/kk_100_days_of_devops/kk_100devops_41_50/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>http://localhost:1313/posts/devops/kk_100_days_of_devops/kk_100devops_51_60/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
+    <lastmod>2026-06-24T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://localhost:1313/posts/devops/kk_100_days_of_devops/kk_100devops_61_70/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
+    <lastmod>2026-06-24T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://localhost:1313/posts/devops/kk_100_days_of_devops/kk_100devops_71_80/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
+    <lastmod>2026-06-24T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://localhost:1313/posts/devops/kk_100_days_of_devops/kk_100devops_81_90/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
+    <lastmod>2026-06-24T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://localhost:1313/posts/devops/kk_100_days_of_devops/kk_100devops_91_100/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
+    <lastmod>2026-06-24T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>http://localhost:1313/posts/portswigger_academy/host_header_attacks/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
+    <loc>http://localhost:1313/posts/hacking/portswigger_academy/host_header_attacks/</loc>
+    <lastmod>2026-06-24T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>http://localhost:1313/posts/portswigger_academy/web_cache_poisoning/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>http://localhost:1313/posts/portswigger_academy/sql_injection/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
+    <loc>http://localhost:1313/posts/hacking/portswigger_academy/web_cache_poisoning/</loc>
+    <lastmod>2026-06-24T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://localhost:1313/posts/remote_vscode/</loc>
-    <lastmod>2025-12-02T00:00:00+00:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>http://localhost:1313/posts/kk_100_days_of_mlops/kk_100mlops_01_10/</loc>
-    <lastmod>2025-05-11T00:00:00+00:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>http://localhost:1313/about/</loc>
+    <lastmod>2026-06-24T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>

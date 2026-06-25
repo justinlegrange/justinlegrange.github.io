@@ -1,41 +1,22 @@
 ---
 title: "KodeKloud's 100 Days of DevOps: Day 31 - 40"
 date: 2026-01-07 # YYYY-MM-DD
-description: "A walkthrough for days 31 through 40 of KodeKloud's 100 Days of DevOps challenges."
-# weight: 1
-# aliases: ["/first"]
+lastMod: 2026-06-24
+summary: "A walkthrough for days 31 through 40 of KodeKloud's 100 Days of DevOps challenges."
 draft: true
 series: ["KodeKloud's 100 Days of DevOps"]
+seriesOrder: 4
 categories: ["DevOps", "KodeKloud"]
-tags: ["devops", "linux", "kodekloud"]
-showToc: true
-TocOpen: false
-hidemeta: false
-disableHLJS: true # to disable highlightjs
-disableShare: false
-hideSummary: true
-searchHidden: true
-ShowReadingTime: true
-ShowBreadCrumbs: false
-ShowPostNavLinks: true
-ShowWordCount: false
-ShowRssButtonInSectionTermList: true
-UseHugoToc: true
-cover:
-    image: "<image path/url>" # image path/url
-    alt: "<alt text>" # alt text
-    caption: "<text>" # display caption under cover
-    relative: false # when using page bundles set this to true
-    hidden: false # only hide on current single page
-    cover.responsiveImages: true
+tags: ["devops", "linux", "docker", "git"]
 ---
 
 ## Intro
 
+Placeholder.
 
 ## Day 31: Git Stash
 
-> [!DANGER] Problem Prompt
+> [!QUOTE]+ Problem Prompt
 > The Nautilus application development team was working on a git repository /usr/src/kodekloudrepos/media present on Storage server in Stratos DC. One of the developers stashed some in-progress changes in this repository, but now they want to restore some of the stashed changes. Find below more details to accomplish this task:  
 > 
 > Look for the stashed changes under /usr/src/kodekloudrepos/media git repository, and restore the stash with stash@{1} identifier. Further, commit and push your changes to the origin.
@@ -99,12 +80,13 @@ To /opt/media.git
 
 ## Day 32: Git Rebase
 
-> [!DANGER] Problem Prompt
+> [!QUOTE]+ Problem Prompt
 > The Nautilus application development team has been working on a project repository /opt/apps.git. This repo is cloned at /usr/src/kodekloudrepos on storage server in Stratos DC. They recently shared the following requirements with DevOps team:  
 > 
 > One of the developers is working on feature branch and their work is still in progress, however there are some changes which have been pushed into the master branch, the developer now wants to rebase the feature branch with the master branch without loosing any data from the feature branch, also they don't want to add any merge commit by simply merging the master branch into the feature branch. Accomplish this task as per requirements mentioned.  
 > 
 > Also remember to push your changes once done.
+{icon="circle-question"}
 
 thor@jumphost ~$ ssh natasha@ststor01
 [natasha@ststor01 ~]$ cd /usr/src/kodekloudrepos/apps
@@ -177,7 +159,7 @@ To /opt/demo.git
 
 ## Day 33: Resolve Git Merge Conflicts
 
-> [!DANGER] Problem Prompt
+> [!QUOTE]+ Problem Prompt
 > Sarah and Max were working on writting some stories which they have pushed to the repository. Max has recently added some new changes and is trying to push them to the repository but he is facing some issues. Below you can find more details:  
 >   
 > SSH into storage server using user max and password Max_pass123. Under /home/max you will find the story-blog repository. Try to push the changes to the origin repo and fix the issues. The story-index.txt must have titles for all 4 stories. Additionally, there is a typo in The Lion and the Mooose line where Mooose should be Mouse.  
@@ -185,6 +167,7 @@ To /opt/demo.git
 > Click on the Gitea UI button on the top bar. You should be able to access the Gitea page. You can login to Gitea server from UI using username sarah and password Sarah_pass123 or username max and password Max_pass123.  
 >  
 > Note: For these kind of scenarios requiring changes to be done in a web UI, please take screenshots so that you can share it with us for review in case your task is marked incomplete. You may also consider using a screen recording software such as loom.com to record and share your work.
+{icon="circle-question"}
 
 thor@jumphost ~$ ssh max@ststor01
 max $ cd story-blog
@@ -255,13 +238,14 @@ To http://git.stratos.xfusioncorp.com/sarah/story-blog.git
 
 ## Day 34: Git Hook
 
-> [!DANGER] Problem Prompt
+> [!QUOTE]+ Problem Prompt
 > The Nautilus application development team was working on a git repository /opt/apps.git which is cloned under /usr/src/kodekloudrepos directory present on Storage server in Stratos DC. The team want to setup a hook on this repository, please find below more details:  
 >  
 > Merge the feature branch into the master branch, but before pushing your changes complete below point.  
 > Create a post-update hook in this git repository so that whenever any changes are pushed to the master branch, it creates a release tag with name release-2023-06-15, where 2023-06-15 is supposed to be the current date. For example if today is 20th June, 2023 then the release tag must be release-2023-06-20. Make sure you test the hook at least once and create a release tag for today's release.  
 > Finally remember to push your changes.  
 > Note: Perform this task using the natasha user, and ensure the repository or existing directory permissions are not altered.
+{icon="circle-question"}
 
 [natasha@ststor01 ~]$ cd /usr/src/kodekloudrepos/apps/
 [natasha@ststor01 apps]$ sudo git status
@@ -395,12 +379,24 @@ release-2026-01-09
 
 ## Day 35: Install Docker Packages and Start Docker Service
 
+Placeholder.
+
 ## Day 36: Deploy Nginx Container on Application Server
+
+Placeholder.
 
 ## Day 37: Copy File to Docker Container
 
+Placeholder.
+
 ## Day 38: Pull Docker Image
+
+Placeholder.
 
 ## Day 39: Create a Docker Image From Container
 
+Placeholder.
+
 ## Day 40: Docker EXEC Operations
+
+Placeholder.

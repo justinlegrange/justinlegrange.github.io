@@ -1,53 +1,54 @@
 ---
 title: "KodeKloud's 100 Days of DevOps: Day 81 - 90"
 date: 2025-12-02 # YYYY-MM-DD
-description: "Desc Text."
-# weight: 1
-# aliases: ["/first"]
+lastMod: 2026-06-24
+summary: "A walkthrough for days 81 through 90 of KodeKloud's 100 Days of DevOps challenges."
 draft: true
 series: ["KodeKloud's 100 Days of DevOps"]
-categories: ["themes", "syntax"]
-tags: ["first"]
-showToc: true
-TocOpen: false
-hidemeta: false
-disableHLJS: true # to disable highlightjs
-disableShare: false
-hideSummary: true
-searchHidden: true
-ShowReadingTime: true
-ShowBreadCrumbs: false
-ShowPostNavLinks: true
-ShowWordCount: false
-ShowRssButtonInSectionTermList: true
-UseHugoToc: true
-cover:
-    image: "<image path/url>" # image path/url
-    alt: "<alt text>" # alt text
-    caption: "<text>" # display caption under cover
-    relative: false # when using page bundles set this to true
-    hidden: false # only hide on current single page
-    cover.responsiveImages: true
+categories: ["DevOps", "KodeKloud"]
+tags: ["devops", "ansible", "jenkins"]
 ---
 
 ## Intro
 
+Placeholder.
+
 ## Day 81: Jenkins Multistage Pipeline
+
+Placeholder.
 
 ## Day 82: Create Ansible Inventory for App Server Testing
 
+Placeholder.
+
 ## Day 83: Troubleshoot and Create Ansible Playbook
+
+Placeholder.
 
 ## Day 84: Copy Data to App Servers using Ansible
 
+Placeholder.
+
 ## Day 85: Create Files on App Servers using Ansible
+
+Placeholder.
 
 ## Day 86: Ansible Ping Module Usage
 
+Placeholder.
+
 ## Day 87: Ansible Install Package
+
+Placeholder.
 
 ## Day 88: Ansible Blockinfile Module
 
+Placeholder.
+
 ## Day 89: Ansible Manage Services
 
+Placeholder.
+
 ## Day 90: Managing ACLs Using Ansible
+
+Placeholder.

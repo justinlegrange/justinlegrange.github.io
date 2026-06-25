@@ -1,48 +1,42 @@
 ---
 title: "KodeKloud's 100 Days of DevOps: Day 11 - 20"
 date: 2025-12-31 # YYYY-MM-DD
-description: "A walkthrough for days 11 through 20 of KodeKloud's 100 Days of DevOps challenges."
-# weight: 1
-# aliases: ["/first"]
+lastMod: 2026-06-24
+summary: "A walkthrough for days 11 through 20 of KodeKloud's 100 Days of DevOps challenges."
 draft: true
 series: ["KodeKloud's 100 Days of DevOps"]
+seriesOrder: 2
 categories: ["DevOps", "KodeKloud"]
 tags: ["devops", "linux", "kodekloud"]
-showToc: true
-TocOpen: false
-hidemeta: false
-disableHLJS: true # to disable highlightjs
-disableShare: false
-hideSummary: true
-searchHidden: true
-ShowReadingTime: true
-ShowBreadCrumbs: false
-ShowPostNavLinks: true
-ShowWordCount: false
-ShowRssButtonInSectionTermList: true
-UseHugoToc: true
-cover:
-    image: "<image path/url>" # image path/url
-    alt: "<alt text>" # alt text
-    caption: "<text>" # display caption under cover
-    relative: false # when using page bundles set this to true
-    hidden: false # only hide on current single page
-    cover.responsiveImages: true
 ---
 
 ## Day 11: Install and Configure Tomcat Server
 
+Placeholder.
+
 ## Day 12: Linux Networking Services
+
+Placeholder.
 
 ## Day 13: IPtables Installation and Configuration
 
+Placeholder.
+
 ## Day 14: Linux Process Troubleshooting
+
+Placeholder.
 
 ## Day 15: Setup SSL for Nginx
 
+Placeholder.
+
 ## Day 16: Install and Configure Nginx as an LBR
 
+Placeholder.
+
 ## Day 17: Install and Configure PostgreSQL
+
+Placeholder.
 
 ## Day 18: Configure LAMP Server
 

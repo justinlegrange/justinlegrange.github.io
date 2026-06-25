@@ -1,25 +1,13 @@
 ---
 title: "Portswigger Web Academy: HTTP Request Smuggling"
 date: 2026-03-13 # YYYY-MM-DD
-description: "Solutions for Portswigger's HTTP Request Smuggling academy module."
+lastMod: 2026-06-24
 summary: "Solutions for Portswigger's HTTP Request Smuggling academy module."
 draft: true
 # series: ["Portswigger Web Academy"]
-categories: ["PSWA", "Web App Security"]
+# seriesOrder: 1
+categories: ["PSWA", "hacking"]
 tags: ["appsec", "pswa", "websec", "hacking"]
-showToc: true
-TocOpen: false
-hidemeta: false
-# disableHLJS: true # to disable highlightjs
-disableShare: false
-hideSummary: true
-searchHidden: true
-ShowReadingTime: true
-ShowBreadCrumbs: false
-ShowPostNavLinks: true
-ShowWordCount: true
-ShowRssButtonInSectionTermList: true
-UseHugoToc: true
 ---
 
 ## 0x00: Intro & Recap
