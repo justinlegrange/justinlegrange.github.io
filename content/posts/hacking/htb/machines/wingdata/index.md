@@ -1,6 +1,6 @@
 ---
 title: "HacktheBox: WingData"
-date: 2026-06-24 # YYYY-MM-DD
+date: 2026-06-27 # YYYY-MM-DD
 # lastMod: 2026-06-24
 summary: "WingData is an easy-difficulty box on HacktheBox dealing with two CVEs that have public proof-of-concept code written for them."
 # draft: true
