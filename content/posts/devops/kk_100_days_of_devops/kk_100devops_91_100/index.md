@@ -5,6 +5,7 @@ lastMod: 2026-06-24
 summary: "A walkthrough for days 91 through 100 of KodeKloud's 100 Days of DevOps challenges."
 draft: true
 series: ["KodeKloud's 100 Days of DevOps"]
+series_order: 10
 categories: ["DevOps", "KodeKloud"]
 tags: ["devops", "ansible", "terraform"]
 ---

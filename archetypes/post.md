@@ -5,7 +5,7 @@ date: 2026-12-02 # YYYY-MM-DD
 summary: "Desc Text."
 draft: true
 # series: ["Themes Guide"]
-# seriesOrder: 1
+# series_order: 1
 categories: ["themes", "syntax"]
 tags: ["first"]
 ---

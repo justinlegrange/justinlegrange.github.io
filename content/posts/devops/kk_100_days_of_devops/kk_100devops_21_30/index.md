@@ -5,7 +5,7 @@ lastMod: 2026-06-24
 summary: "A walkthrough for days 21 through 30 of KodeKloud's 100 Days of DevOps challenges."
 draft: true
 series: ["KodeKloud's 100 Days of DevOps"]
-seriesOrder: 3
+series_order: 3
 categories: ["DevOps", "KodeKloud"]
 tags: ["devops", "linux", "git"]
 ---

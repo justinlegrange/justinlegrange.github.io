@@ -5,7 +5,7 @@ lastMod: 2026-06-25
 summary: "A walkthrough for days 51 through 60 of KodeKloud's 100 Days of DevOps challenges."
 draft: true
 series: ["KodeKloud's 100 Days of DevOps"]
-seriesOrder: 6
+series_order: 6
 categories: ["DevOps", "KodeKloud"]
 tags: ["devops", "linux", "docker", "kubernetes"]
 ---

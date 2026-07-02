@@ -5,7 +5,7 @@ lastMod: 2026-06-24
 summary: "A walkthrough for days 31 through 40 of KodeKloud's 100 Days of DevOps challenges."
 draft: true
 series: ["KodeKloud's 100 Days of DevOps"]
-seriesOrder: 4
+series_order: 4
 categories: ["DevOps", "KodeKloud"]
 tags: ["devops", "linux", "docker", "git"]
 ---
@@ -239,41 +239,17 @@ To http://git.stratos.xfusioncorp.com/sarah/story-blog.git
 ## Day 34: Git Hook
 
 > [!QUOTE]+ Problem Prompt
-> The Nautilus application development team was working on a git repository /opt/apps.git which is cloned under /usr/src/kodekloudrepos directory present on Storage server in Stratos DC. The team want to setup a hook on this repository, please find below more details:  
->  
+> The Nautilus application development team was working on a git repository /opt/demo.git which is cloned under /usr/src/kodekloudrepos directory present on Storage server in Stratos DC. The team want to setup a hook on this repository, please find below more details:  
 > Merge the feature branch into the master branch, but before pushing your changes complete below point.  
 > Create a post-update hook in this git repository so that whenever any changes are pushed to the master branch, it creates a release tag with name release-2023-06-15, where 2023-06-15 is supposed to be the current date. For example if today is 20th June, 2023 then the release tag must be release-2023-06-20. Make sure you test the hook at least once and create a release tag for today's release.  
 > Finally remember to push your changes.  
-> Note: Perform this task using the natasha user, and ensure the repository or existing directory permissions are not altered.
+> Note: Perform this task using the natasha user, and ensure the repository or existing directory permissions are not altered.  
 {icon="circle-question"}
 
-[natasha@ststor01 ~]$ cd /usr/src/kodekloudrepos/apps/
-[natasha@ststor01 apps]$ sudo git status
-On branch feature
-nothing to commit, working tree clean
-[natasha@ststor01 apps]$ sudo git log
-commit caa6599781bc02fc4e0b9202d5215fca60921d7c (HEAD -> feature, origin/feature)
-Author: Admin <admin@kodekloud.com>
-Date:   Fri Jan 9 21:59:38 2026 +0000
+Ref: https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
 
-    Add feature
-
-commit fa49a4e9cee276c74e9faa936b214a7ef94b1e88 (origin/master, master)
-Author: Admin <admin@kodekloud.com>
-Date:   Fri Jan 9 21:59:38 2026 +0000
-
-    initial commit
-
-[natasha@ststor01 apps]$ sudo git checkout master
-Switched to branch 'master'
-Your branch is up to date with 'origin/master'.
-[natasha@ststor01 apps]$ sudo git merge feature
-Updating fa49a4e..caa6599
-Fast-forward
- feature.txt | 1 +
- 1 file changed, 1 insertion(+)
- create mode 100644 feature.txt
-
+What is a hook?
+```console
 [natasha@ststor01 apps]$ cd ./.git/hooks
 [natasha@ststor01 hooks]$ ls -la
 total 72
@@ -293,99 +269,263 @@ drwxr-xr-x 8 natasha natasha 4096 Jan  9 22:14 ..
 -rwxr-xr-x 1 natasha natasha 2787 Jan  9 21:59 push-to-checkout.sample
 -rwxr-xr-x 1 natasha natasha 2312 Jan  9 21:59 sendemail-validate.sample
 -rwxr-xr-x 1 natasha natasha 3654 Jan  9 21:59 update.sample
-
-```
-[natasha@ststor01 hooks]$ cat pre-push.sample
-#!/usr/bin/sh
-
-# An example hook script to verify what is about to be pushed.  Called by "git
-# push" after it has checked the remote status, but before anything has been
-# pushed.  If this script exits with a non-zero status nothing will be pushed.
-#
-# This hook is called with the following parameters:
-#
-# $1 -- Name of the remote to which the push is being done
-# $2 -- URL to which the push is being done
-#
-# If pushing without using a named remote those arguments will be equal.
-#
-# Information about the commits which are being pushed is supplied as lines to
-# the standard input in the form:
-#
-#   <local ref> <local oid> <remote ref> <remote oid>
-#
-# This sample shows how to prevent push of commits where the log message starts
-# with "WIP" (work in progress).
-
-remote="$1"
-url="$2"
-
-zero=$(git hash-object --stdin </dev/null | tr '[0-9a-f]' '0')
-
-while read local_ref local_oid remote_ref remote_oid
-do
-        if test "$local_oid" = "$zero"
-        then
-                # Handle delete
-                :
-        else
-                if test "$remote_oid" = "$zero"
-                then
-                        # New branch, examine all commits
-                        range="$local_oid"
-                else
-                        # Update to existing branch, examine new commits
-                        range="$remote_oid..$local_oid"
-                fi
-
-                # Check for WIP commit
-                commit=$(git rev-list -n 1 --grep '^WIP' "$range")
-                if test -n "$commit"
-                then
-                        echo >&2 "Found WIP commit in $local_ref, not pushing"
-                        exit 1
-                fi
-        fi
-done
-
-exit 0
 ```
 
-first, getting the tag right:
+Post-update hook is a server-side hook
+
+```console
+[natasha@ststor01 ~]$ cd /usr/src/kodekloudrepos/demo
+[natasha@ststor01 demo]$ git status
+On branch feature
+nothing to commit, working tree clean
+[natasha@ststor01 demo]$ git branch
+* feature
+  master
+[natasha@ststor01 demo]$ git log
+commit abb39da2456a36e74360512d02726a179e8a6e62 (HEAD -> feature, origin/feature)
+Author: Admin <admin@kodekloud.com>
+Date:   Tue Jun 30 19:56:23 2026 +0000
+
+    Add feature
+
+commit bd592d96a5febfcc87e68ccfde2c5f6408c3d058 (origin/master, master)
+Author: Admin <admin@kodekloud.com>
+Date:   Tue Jun 30 19:56:23 2026 +0000
+
+    initial commit
 ```
+
+first, getting the tag and conditional right:
+```console
 [natasha@ststor01 hooks]$ echo "release-$(date +%Y-%m-%d)"
 release-2026-01-09
+
+[natasha@ststor01 demo]$ if [[ $(git branch --show-current) -eq "master" ]]; then echo "MASTER"; fi
+MASTER
 ```
-sudo vi pre-push
+
+Creating the hook:
 ```
-tag="release-$(date +%Y-%m-%d)"
-git tag -a $tag -m "$tag"
+[natasha@ststor01 demo]$ vi /opt/demo.git/hooks/post-update
+[natasha@ststor01 demo]$ chmod +x /opt/demo.git/hooks/post-update
+```
+
+Hook:
+```bash 
+echo "Executing server-side post-update hook!"
+
+if [[ $(git branch --show-current) -eq "master" ]]; then
+    tag="release-$(date +%Y-%m-%d)"
+    git tag -a $tag -m "$tag"
+fi
 exit 0
 ```
-[natasha@ststor01 hooks]$ cd ../../
-[natasha@ststor01 apps]$ sudo git add .
-[natasha@ststor01 apps]$ sudo git commit -m 'adding hook'
-On branch master
-Your branch is ahead of 'origin/master' by 1 commit.
-  (use "git push" to publish your local commits)
 
-nothing to commit, working tree clean
-[natasha@ststor01 apps]$ sudo git push
+We need to set up our git config, otherwise we get errors:
+```console
+[natasha@ststor01 demo]$ git config --global user.email "a@a"
+[natasha@ststor01 demo]$ git config --global user.name "n"
+```
+
+Now we need to merge in the features and push everything
+```console
+[natasha@ststor01 demo]$ git checkout master
+Switched to branch 'master'
+Your branch is up to date with 'origin/master'.
+[natasha@ststor01 demo]$ git merge feature
+Updating bd592d9..abb39da
+Fast-forward
+ feature.txt | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 feature.txt
+[natasha@ststor01 demo]$ git push
 Total 0 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
-To /opt/apps.git
-   fa49a4e..caa6599  master -> master
-[natasha@ststor01 apps]$ sudo git tag -l
-release-2026-01-09
+remote: Executing server-side post-update hook!
+To /opt/demo.git
+   bd592d9..abb39da  master -> master
+[natasha@ststor01 demo]$ cd /opt/demo.git
+[natasha@ststor01 demo.git]$ git tag -l
+release-2026-06-30
+```
+
 
 ## Day 35: Install Docker Packages and Start Docker Service
 
-Placeholder.
+> [!QUOTE]+ Problem Prompt
+> The Nautilus DevOps team aims to containerize various applications following a recent meeting with the application development team. They intend to conduct testing with the following steps:
+> 
+> Install docker-ce and docker compose packages on App Server 3.
+> 
+> Initiate the docker service.
+{icon="circle-question"}
+
+super easy - follow the install instructions: https://docs.docker.com/engine/install/centos/
+
+```console
+[banner@stapp03 ~]$ dnf list --installed | egrep "docker*"
+
+[banner@stapp03 ~]$ sudo dnf remove docker \
+                  docker-client \
+                  docker-client-latest \
+                  docker-common \
+                  docker-latest \
+                  docker-latest-logrotate \
+                  docker-logrotate \
+                  docker-engine
+No match for argument: docker
+No match for argument: docker-client
+No match for argument: docker-client-latest
+No match for argument: docker-common
+No match for argument: docker-latest
+No match for argument: docker-latest-logrotate
+No match for argument: docker-logrotate
+No match for argument: docker-engine
+No packages marked for removal.
+Dependencies resolved.
+Nothing to do.
+Complete!
+
+[banner@stapp03 ~]$ sudo dnf -y install dnf-plugins-core
+Last metadata expiration check: 0:06:51 ago on Tue Jun 30 20:33:36 2026.
+Package dnf-plugins-core-4.3.0-25.el9.noarch is already installed.
+Dependencies resolved.
+=================================================================================================================
+ Package                               Architecture        Version                     Repository           Size
+=================================================================================================================
+Upgrading:
+ dnf-plugins-core                      noarch              4.3.0-26.el9                baseos               36 k
+ python3-dnf-plugins-core              noarch              4.3.0-26.el9                baseos              263 k
+ yum-utils
+
+ [...]
+
+ Upgraded:
+  dnf-plugins-core-4.3.0-26.el9.noarch                python3-dnf-plugins-core-4.3.0-26.el9.noarch               
+  yum-utils-4.3.0-26.el9.noarch                      
+
+Complete!
+
+
+
+[banner@stapp03 ~]$ sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+Adding repo from: https://download.docker.com/linux/centos/docker-ce.repo
+
+
+[banner@stapp03 ~]$ sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+Docker CE Stable - x86_64                                                        106 kB/s | 2.0 kB     00:00    
+Docker CE Stable - x86_64                                                        1.3 MB/s |  80 kB     00:00    
+Dependencies resolved.
+=================================================================================================================
+ Package                             Architecture     Version                   Repository                  Size
+=================================================================================================================
+Installing:
+ containerd.io                       x86_64           2.2.5-1.el9               docker-ce-stable            35 M
+ docker-buildx-plugin                x86_64           0.35.0-1.el9              docker-ce-stable            18 M
+ docker-ce                           x86_64           3:29.6.1-1.el9            docker-ce-stable            24 M
+ docker-ce-cli                       x86_64           1:29.6.1-1.el9            docker-ce-stable           8.5 M
+ docker-compose-plugin               x86_64           5.2.0-1.el9               docker-ce-stable           8.4 M
+Installing dependencies:
+
+[...]
+
+Installed:
+  container-selinux-4:2.245.0-1.el9.noarch               containerd.io-2.2.5-1.el9.x86_64                        
+  docker-buildx-plugin-0.35.0-1.el9.x86_64               docker-ce-3:29.6.1-1.el9.x86_64                         
+  docker-ce-cli-1:29.6.1-1.el9.x86_64                    docker-ce-rootless-extras-29.6.1-1.el9.x86_64           
+  docker-compose-plugin-5.2.0-1.el9.x86_64               iptables-legacy-1.8.10-11.1.el9.x86_64                  
+  iptables-legacy-libs-1.8.10-11.1.el9.x86_64            iptables-libs-1.8.10-11.el9.x86_64                      
+  jansson-2.14-1.el9.x86_64                              libmnl-1.0.4-16.el9.x86_64                              
+  libnetfilter_conntrack-1.0.9-1.el9.x86_64              libnfnetlink-1.0.1-23.el9.x86_64                        
+  libnftnl-1.2.6-4.el9.x86_64                            nftables-1:1.0.9-7.el9.x86_64                           
+  xz-5.2.5-8.el9.x86_64                                 
+
+Complete!
+
+
+[banner@stapp03 ~]$ sudo systemctl enable --now docker
+Created symlink /etc/systemd/system/multi-user.target.wants/docker.service → /usr/lib/systemd/system/docker.service.
+
+
+
+[banner@stapp03 ~]$ sudo systemctl status docker
+● docker.service - Docker Application Container Engine
+     Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; preset: disabled)
+     Active: active (running) since Tue 2026-06-30 20:42:41 UTC; 19s ago
+TriggeredBy: ● docker.socket
+       Docs: https://docs.docker.com
+   Main PID: 38667 (dockerd)
+      Tasks: 16
+     Memory: 25.9M (peak: 27.2M)
+        CPU: 283ms
+     CGroup: /system.slice/docker.service
+             └─38667 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+
+[...]
+
+
+
+
+[banner@stapp03 ~]$ sudo docker run hello-world
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+4f55086f7dd0: Pull complete 
+Digest: sha256:96498ffd522e70807ab6384a5c0485a79b9c7c08ca79ba08623edcad1054e62d
+Status: Downloaded newer image for hello-world:latest
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+ ```
 
 ## Day 36: Deploy Nginx Container on Application Server
+> [!QUOTE]+ Problem Prompt
+> The Nautilus DevOps team is conducting application deployment tests on selected application servers. They require a nginx container deployment on Application Server 1. Complete the task with the following instructions:
+> 
+> On Application Server 1 create a container named nginx_1 using the nginx image with the alpine tag. Ensure container is in a running state.
+{icon="circle-question"}
 
-Placeholder.
+```console
+[tony@stapp01 ~]$ docker run -d --name nginx_1 nginx:alpine
+Unable to find image 'nginx:alpine' locally
+alpine: Pulling from library/nginx
+e6f31ffc071e: Pull complete 
+c16defe09b2f: Pull complete 
+5b429a43b8df: Pull complete 
+967885d218c5: Pull complete 
+ab1fd9049751: Pull complete 
+ce42635eeddd: Pull complete 
+01bf363d61e6: Pull complete 
+c75b9c33e8b0: Pull complete 
+Digest: sha256:54f2a904c251d5a34adf545a72d32515a15e08418dae0266e23be2e18c66fefa
+Status: Downloaded newer image for nginx:alpine
+dd06593fb59e14f0c574a424044947b0ef27f38c1822c87f114c5372938ed564
+[tony@stapp01 ~]$ docker ps
+CONTAINER ID   IMAGE          COMMAND                  CREATED         STATUS         PORTS     NAMES
+dd06593fb59e   nginx:alpine   "/docker-entrypoint.…"   3 seconds ago   Up 2 seconds   80/tcp    nginx_1
+```
 
 ## Day 37: Copy File to Docker Container
+
+> [!QUOTE]+ Problem Prompt
+
+{icon="circle-question"}
 
 Placeholder.
 
