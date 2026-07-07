@@ -18,7 +18,7 @@ Welcome all! Today we have another easy-difficulty box from HacktheBox, WingData
 
 ## 0x01: Initial Access
 
-First things first - once the box spawns for me, I copy the IP address from the platform and edit my `/etc/hosts` file. For those who are new to this - the `/etc/hosts` file allows Linux to do name-based lookups instead of needing to type in the IP address every time. It's the first file in the name resolution lookup order usually (unless you've changed `resolv.conf`). Here's what running `$ man hosts` has to say about the file format:
+First things first - once the box spawns for me, I copy the IP address from the platform and edit my `/etc/hosts` file. For those who are new to this - the `/etc/hosts` file allows Linux to do name-based lookups instead of needing to type in the IP address every time. It's the first file in the name resolution lookup order usually (unless you've changed `nsswitch.conf`). Here's what running `$ man hosts` has to say about the file format:
 ```
 This file is a simple text file that associates IP  addresses  with  host‐
 names,  one  line per IP address. For each host a single line should
