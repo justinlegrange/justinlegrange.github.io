@@ -9,11 +9,11 @@ categories: ["PSWA", "hacking"]
 tags: ["appsec", "pswa", "websec", "hacking"]
 ---
 
-## 0x00: Introduction
+## Introduction
 
 Placeholder.
 
-## 0x01: SQL injection vulnerability in WHERE clause allowing retrieval of hidden data
+## Challenge 1: SQL injection vulnerability in WHERE clause allowing retrieval of hidden data
 > [!QUOTE]+ Problem Prompt
 > This lab contains a SQL injection vulnerability in the product category filter. When the user selects a category, the application carries out a SQL query like the following:
 > SELECT * FROM products WHERE category = 'Gifts' AND released = 1
@@ -27,7 +27,7 @@ Just need to do a filter bypass using a true condition
 
 Solution: https://0a020007047c11fc81e9079c00ae0090.web-security-academy.net/filter?category=Gifts'+OR+1=1--
 
-## 0x02: SQL injection vulnerability allowing login bypass
+## Challenge 2: SQL injection vulnerability allowing login bypass
 
 > [!QUOTE]+ Problem Prompt
 > This lab contains a SQL injection vulnerability in the login function.
@@ -50,66 +50,66 @@ csrf=m3ASak9gnDBNw5DPJMo9DNt3YvksaI7q&username=administrator&password=test'+or+1
 
 adding to cookies causes the lab to successfully complete
 
-## 0x03: SQL injection attack, querying the database type and version on Oracle
+## Challenge 3: SQL injection attack, querying the database type and version on Oracle
 
 Placeholder.
 
-## 0x04: SQL injection attack, querying the database type and version on MySQL and Microsoft
+## Challenge 4: SQL injection attack, querying the database type and version on MySQL and Microsoft
 
 Placeholder.
 
-## 0x05: SQL injection attack, listing the database contents on non-Oracle databases
+## Challenge 5: SQL injection attack, listing the database contents on non-Oracle databases
 
 Placeholder.
 
-## 0x06: SQL injection attack, listing the database contents on Oracle
+## Challenge 6: SQL injection attack, listing the database contents on Oracle
 
 Placeholder.
 
-## 0x07: SQL injection UNION attack, determining the number of columns returned by the query
+## Challenge 7: SQL injection UNION attack, determining the number of columns returned by the query
 
 Placeholder.
 
-## 0x08: SQL injection UNION attack, finding a column containing text
+## Challenge 8: SQL injection UNION attack, finding a column containing text
 
 Placeholder.
 
-## 0x09: SQL injection UNION attack, retrieving data from other tables
+## Challenge 9: SQL injection UNION attack, retrieving data from other tables
 
 Placeholder.
 
-## 0x0A: SQL injection UNION attack, retrieving multiple values in a single column
+## Challenge 10: SQL injection UNION attack, retrieving multiple values in a single column
 
 Placeholder.
 
-## 0x0B: Blind SQL injection with conditional responses
+## Challenge 11: Blind SQL injection with conditional responses
 
 Placeholder.
 
-## 0x0C: Blind SQL injection with conditional errors
+## Challenge 12: Blind SQL injection with conditional errors
 
 Placeholder.
 
-## 0x0D: Visible error-based SQL injection
+## Challenge 13: Visible error-based SQL injection
 
 Placeholder.
 
-## 0x0E: Blind SQL injection with time delays
+## Challenge 14: Blind SQL injection with time delays
 
 Placeholder.
 
-## 0x0F: Blind SQL injection with time delays and information retrieval
+## Challenge 15: Blind SQL injection with time delays and information retrieval
 
 Placeholder.
 
-## 0x10: Blind SQL injection with out-of-band interaction
+## Challenge 16: Blind SQL injection with out-of-band interaction
 
 Placeholder.
 
-## 0x11: Blind SQL injection with out-of-band data exfiltration
+## Challenge 17: Blind SQL injection with out-of-band data exfiltration
 
 Placeholder.
 
-## 0x12: SQL injection with filter bypass via XML encoding
+## Challenge 18: SQL injection with filter bypass via XML encoding
 
 Placeholder.

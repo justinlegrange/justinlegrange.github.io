@@ -10,7 +10,7 @@ categories: ["PSWA", "hacking"]
 tags: ["appsec", "pswa", "websec", "hacking"]
 ---
 
-## 0x00: Intro & Recap
+## Introduction
 
 Labs: https://portswigger.net/web-security/all-labs#http-request-smuggling
 
@@ -18,7 +18,7 @@ Labs: https://portswigger.net/web-security/all-labs#http-request-smuggling
 > Just so you're warned - this post ended up *way* longer than I thought it would be. Make judicious use of the Table of Contents on the right hand side to find solutions that interest you!
 {icon="circle-info"}
 
-## 0x01: HTTP request smuggling, confirming a CL.TE vulnerability via differential responses
+## Challenge 1: HTTP request smuggling, confirming a CL.TE vulnerability via differential responses
 
 > [!QUOTE]+ Problem Prompt
 > This lab involves a front-end and back-end server, and the front-end server doesn't support chunked encoding.
@@ -53,7 +53,7 @@ So now, we just have to build and send the request twice to get our `404 Not Fou
 
 ![CL.TE Request Smuggled](images/0x01/request-smuggled-test.png#center)
 
-## 0x02: HTTP request smuggling, confirming a TE.CL vulnerability via differential responses
+## Challenge 2: HTTP request smuggling, confirming a TE.CL vulnerability via differential responses
 
 > [!QUOTE]+ Problem Prompt
 > This lab involves a front-end and back-end server, and the back-end server doesn't support chunked encoding.
@@ -96,7 +96,7 @@ followed by a get to / results in 404
 
 
 
-## 0x03: Exploiting HTTP request smuggling to bypass front-end security controls, CL.TE vulnerability
+## Challenge 3: Exploiting HTTP request smuggling to bypass front-end security controls, CL.TE vulnerability
 
 > [!QUOTE]+ Problem Prompt
 >  This lab involves a front-end and back-end server, and the front-end server doesn't support chunked encoding. There's an admin panel at /admin, but the front-end server blocks access to it.
@@ -111,7 +111,7 @@ asdf
 
 POST makes it try to go to
 
-## 0x04: Exploiting HTTP request smuggling to bypass front-end security controls, TE.CL vulnerability
+## Challenge 4: Exploiting HTTP request smuggling to bypass front-end security controls, TE.CL vulnerability
 
 > [!QUOTE]+ Problem Prompt
 >  This lab involves a front-end and back-end server, and the back-end server doesn't support chunked encoding. There's an admin panel at /admin, but the front-end server blocks access to it.
@@ -125,7 +125,7 @@ POST makes it try to go to
 
 asdf
 
-## 0x05: Exploiting HTTP request smuggling to reveal front-end request rewriting
+## Challenge 5: Exploiting HTTP request smuggling to reveal front-end request rewriting
 
 > [!QUOTE]+ Problem Prompt
 >  This lab involves a front-end and back-end server, and the front-end server doesn't support chunked encoding.
@@ -143,7 +143,7 @@ asdf
 
 adding this header: `X-pNuuiC-Ip: 104.63.70.82`
 
-## 0x06: Exploiting HTTP request smuggling to capture other users' requests
+## Challenge 6: Exploiting HTTP request smuggling to capture other users' requests
 
 > [!QUOTE]+ Problem Prompt
 >  This lab involves a front-end and back-end server, and the front-end server doesn't support chunked encoding.
@@ -179,7 +179,7 @@ csrf=fSc9fJATebAcjsLUjQsGhrZ0pUFHocrj&postId=5&name=test&email=a%40a.com&website
 
 ```
 
-## 0x07: Exploiting HTTP request smuggling to deliver reflected XSS
+## Challenge 7: Exploiting HTTP request smuggling to deliver reflected XSS
 
 > [!QUOTE]+ Problem Prompt
 >  This lab involves a front-end and back-end server, and the front-end server doesn't support chunked encoding.
@@ -216,7 +216,7 @@ Foo: X
 url: https://0a4000430333e77180d803f6008600d0.web-security-academy.net/post?postId=8
 
 
-## 0x08: Response queue poisoning via H2.TE request smuggling
+## Challenge 8: Response queue poisoning via H2.TE request smuggling
 
 > [!QUOTE]+ Problem Prompt
 > This lab is vulnerable to request smuggling because the front-end server downgrades HTTP/2 requests even if they have an ambiguous length.
@@ -273,7 +273,7 @@ browse to admin panel then delete carlos
 
 asdf
 
-## 0x09: H2.CL request smuggling
+## Challenge 9: H2.CL request smuggling
 
 > [!QUOTE]+ Problem Prompt
 > This lab is vulnerable to request smuggling because the front-end server downgrades HTTP/2 requests even if they have an ambiguous length.
@@ -381,7 +381,7 @@ once you have it popping on yourself, it really is just spray and pray - throw o
 
 asdf
 
-## 0x0A: HTTP/2 request smuggling via CRLF injection
+## Challenge 10: HTTP/2 request smuggling via CRLF injection
 
 > [!QUOTE]+ Problem Prompt
 > This lab is vulnerable to request smuggling because the front-end server downgrades HTTP/2 requests and fails to adequately sanitize incoming headers.
@@ -428,7 +428,7 @@ add session to our chrome cookies/replace current one, refresh - we're carlos, l
 interestingly, this _isn't_ the solution from portswigger - they used the search feature to pull down the other user's cookie by HRS
 tl;dr is that by CRLF'ing the TE header into the search, the next user's request gets popped into your recent searches
 
-## 0x0B: HTTP/2 request splitting via CRLF injection
+## Challenge 11: HTTP/2 request splitting via CRLF injection
 
 > [!QUOTE]+ Problem Prompt
 > This lab is vulnerable to request smuggling because the front-end server downgrades HTTP/2 requests and fails to adequately sanitize incoming headers.
@@ -470,15 +470,15 @@ response has link to `/admin/delete?username=carlos` - this is the goal endpoint
 
 send the delete request for carlos!
 
-## 0x0C: 0.CL request smuggling
+## Challenge 12: 0.CL request smuggling
 
-asdf
+Placeholder.
 
-## 0x0D: CL.0 request smuggling
+## Challenge 13: CL.0 request smuggling
 
-asdf
+Placeholder.
 
-## 0x0E: HTTP request smuggling, basic CL.TE vulnerability
+## Challenge 14: HTTP request smuggling, basic CL.TE vulnerability
 
 > [!QUOTE]+ Problem Prompt
 >  This lab involves a front-end and back-end server, and the front-end server doesn't support chunked encoding. The front-end server rejects requests that aren't using the GET or POST method.  
@@ -510,7 +510,7 @@ G
 
 
 
-## 0x0F: HTTP request smuggling, basic TE.CL vulnerability
+## Challenge 15: HTTP request smuggling, basic TE.CL vulnerability
 
 > [!QUOTE]+ Problem Prompt
 > This lab involves a front-end and back-end server, and the back-end server doesn't support chunked encoding. The front-end server rejects requests that aren't using the GET or POST method.
@@ -541,7 +541,7 @@ Make sure to unset 'Update content length'
 
 
 
-## 0x10: HTTP request smuggling, obfuscating the TE header
+## Challenge 16: HTTP request smuggling, obfuscating the TE header
 
 > [!QUOTE]+ Problem Prompt
 > This lab involves a front-end and back-end server, and the two servers handle duplicate HTTP request headers in different ways. The front-end server rejects requests that aren't using the GET or POST method.
@@ -569,7 +569,7 @@ Content-Length: 6
 G
 ```
 
-## 0x11: Exploiting HTTP request smuggling to perform web cache poisoning
+## Challenge 17: Exploiting HTTP request smuggling to perform web cache poisoning
 
 > [!QUOTE]+ Problem Prompt
 > This lab involves a front-end and back-end server, and the front-end server doesn't support chunked encoding. The front-end server is configured to cache certain responses.
@@ -720,7 +720,7 @@ Content-Length: 0
 
 now we have an alert box for any client that connects to the server!
 
-## 0x12: Exploiting HTTP request smuggling to perform web cache deception
+## Challenge 18: Exploiting HTTP request smuggling to perform web cache deception
 
 > [!QUOTE]+ Problem Prompt
 > This lab involves a front-end and back-end server, and the front-end server doesn't support chunked encoding. The front-end server is caching static resources.
@@ -815,7 +815,7 @@ easier if you filter on 'X-Cache: hit' (since a miss indicates first caching of 
 make sure that JS files aren't filtered, and even include images and anything you wouldn't normally think about checking - as long as it's cached, it's fair game
 
 
-## 0x13: Bypassing access controls via HTTP/2 request tunnelling
+## Challenge 19: Bypassing access controls via HTTP/2 request tunnelling
 
 > [!QUOTE]+ Problem Prompt
 > This lab is vulnerable to request smuggling because the front-end server downgrades HTTP/2 requests and fails to adequately sanitize incoming header names. To solve the lab, access the admin panel at /admin as the administrator user and delete the user carlos.
@@ -901,7 +901,7 @@ step 3 - delete carlos
 
 now for the easy part - just edit the tunneled request to have a delete call
 
-## 0x14: Web cache poisoning via HTTP/2 request tunnelling
+## Challenge 20: Web cache poisoning via HTTP/2 request tunnelling
 
 > [!QUOTE]+ Problem Prompt
 > This lab is vulnerable to request smuggling because the front-end server downgrades HTTP/2 requests and doesn't consistently sanitize incoming headers.
@@ -924,12 +924,12 @@ step 2a - figure out cache key
 step 3 - make the tunnel have a XSS payload
 search is doing entity encoding
 
-asdf
+Placeholder.
 
-## 0x15: Client-side desync
+## Challenge 21: Client-side desync
 
-asdf
+Placeholder.
 
-## 0x16: Server-side pause-based request smuggling
+## Challenge 22: Server-side pause-based request smuggling
 
-asdf
+Placeholder.

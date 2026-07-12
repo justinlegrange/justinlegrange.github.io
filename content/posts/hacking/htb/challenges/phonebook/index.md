@@ -10,11 +10,11 @@ categories: ["HTB", "hacking"]
 tags: ["appsec", "htb", "websec", "hacking"]
 ---
 
-## 0x00: Intro
+## Introduction
 
 Placeholder.
 
-## 0x01: Bypass
+## LDAP Injection - Login
 
 First step was to try a SQL injection bypass, since that's what I've been working on lately
 ```console
@@ -108,7 +108,7 @@ Date: Tue, 23 Jun 2026 15:15:49 GMT
 Content-Length: 0
 ```
 
-## 0x02: Searching
+## LDAP Injection - Search Function
 
 Now that we have a cookie, we can either do the auth bypass in-browser by entering `*` in both fields or just add the cookie, dealer's choice
 

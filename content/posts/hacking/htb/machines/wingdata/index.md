@@ -8,7 +8,7 @@ categories: ["HTB", "hacking"]
 tags: ["appsec", "htb", "cve", "hacking", "htb-easy"]
 ---
 
-## 0x00: Introduction
+## Introduction
 
 Welcome all! Today we have another easy-difficulty box from HacktheBox, WingData. This one was created by [WackyH4cker](https://app.hackthebox.com/profile/305136) and is a Linux box focused around public CVE exploitation. I enjoyed the box - although the initial compromise CVE was a bit finnicky - but overall, I think it was fairly rated and mostly straightforward. Let's dive in!
 
@@ -16,7 +16,7 @@ Welcome all! Today we have another easy-difficulty box from HacktheBox, WingData
 > In case you're squeamish about this sort of thing, there are a bunch of spoilers ahead - proceed at your own (self-learning) risk. I'll be diving into the nitty-gritty behind solutions where I can, so hopefully you'll be able to learn a thing or two. It's also worth noting that if you're working alongside me, you'll see different IP addresses - since I'm on a VIP subscription, they're deployed on-demand.
 {icon="circle-info"}
 
-## 0x01: Initial Access
+## Initial Access
 
 First things first - once the box spawns for me, I copy the IP address from the platform and edit my `/etc/hosts` file. For those who are new to this - the `/etc/hosts` file allows Linux to do name-based lookups instead of needing to type in the IP address every time. It's the first file in the name resolution lookup order usually (unless you've changed `nsswitch.conf`). Here's what running `$ man hosts` has to say about the file format:
 ```
@@ -97,6 +97,8 @@ ftp                     [Status: 200, Size: 678, Words: 44, Lines: 10, Duration:
 As before, we add `ftp.wingdata.htb` to our `/etc/hosts` file and we can visit the site directly. This time, we're greeted with a login page for a software - WingFTP Server v7.4.3:
 
 ![FTP Site.](./images/wingftp_login.png)
+
+### WingFTP
 
 From here we have two routes presented to use - we either need to find a way to enumerate deeper and find credentials for the FTP site, or see if there's any sort of public exploit that's been disclosed for the software in use. It's usually worth a quick look for any exploit code if you have even the slightest hint at what might be on the box, so Google's where I went next. In this case Wing FTP 7.4.3 has a pretty major unauthenticated RCE in [CVE-2025-47812](https://nvd.nist.gov/vuln/detail/CVE-2025-47812), and checking around leads us to [this Python script on ExploitDB](https://www.exploit-db.com/exploits/52347) that we can run against it.  
 
@@ -221,6 +223,7 @@ bash: no job control in this shell
 [wingftp@wingdata:/opt/wftpserver]$
 ```
 
+### Shell TTY Upgrade
 The last thing to do is to set up better terminal access through a TTY upgrade - for those running zsh, [this article](https://blog.mrtnrdl.de/infosec/2019/05/23/obtain-a-full-interactive-shell-with-zsh.html) explains how to upgrade to an interactive shell from your reverse shell. In case it ever goes down, here are the steps I use:
 
 First, in the reverse shell figure out which version of `python` you have access to, and then run this to spawn a new shell: `python3 -c 'import pty; pty.spawn("/bin/bash")'`. After that spawns, background your `nc/ncat` reverse shell session with the hotkey `Ctrl + Z`. This will return you to your local shell. Next, get the number of rows and columns in your terminal with the following command:
@@ -263,8 +266,7 @@ stty rows 34 cols 153
 
 Now that we finally have a fully-interactive terminal, let's see how we can move into an account with better privileges than the `wingftp` service account.
 
-## 0x02: Gaining Access to Wacky
-
+## Gaining Access to Wacky
 After gaining the initial access, we need to figure out ways to raise our privileges to root in order to fully compromise the system. In order to do that, we need to figure out the differential between our account, other accounts, and root, and what steps we can ultimately take to get there. Let's start with a quick check to see what other accounts are on the box, then move on to using LinPeas to automate some of the discovery process:
 
 ```console
@@ -341,7 +343,7 @@ wacky
 uid=1001(wacky) gid=1001(wacky) groups=1001(wacky)
 ```
 
-## 0x03: Privilege Escalation
+## Privilege Escalation
 
 Because I now have the password for `wacky`, the first check I do is to run `sudo -l` to see if we have any passwordless scripts or binaries that could be abused:
 
@@ -490,7 +492,7 @@ uid=0(root) gid=0(root) groups=0(root)
 
 And with that, we've fully compromised WingData - hopefully you enjoyed the writeup and learned some new skills!
 
-## 0x04: References
+## References
 Virtual Host Routing: [https://httpd.apache.org/docs/2.4/vhosts/name-based.html](https://httpd.apache.org/docs/2.4/vhosts/name-based.html)  
 CVE-2025-47812 Posting: [https://nvd.nist.gov/vuln/detail/CVE-2025-47812](https://nvd.nist.gov/vuln/detail/CVE-2025-47812)  
 RCE Article: [https://www.rcesecurity.com/2025/06/what-the-null-wing-ftp-server-rce-cve-2025-47812/](https://www.rcesecurity.com/2025/06/what-the-null-wing-ftp-server-rce-cve-2025-47812/)  

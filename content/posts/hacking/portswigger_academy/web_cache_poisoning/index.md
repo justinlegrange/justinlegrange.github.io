@@ -9,11 +9,11 @@ categories: ["PSWA", "hacking"]
 tags: ["appsec", "pswa", "websec", "hacking"]
 ---
 
-## 0x00: Intro & Recap
+## Introduction
 
 Labs: https://portswigger.net/web-security/all-labs#web-cache-poisoning
 
-## 0x01: Web cache poisoning with an unkeyed header
+## Challenge 1: Web cache poisoning with an unkeyed header
 
 > [!QUOTE]+ Problem Prompt
 > This lab is vulnerable to web cache poisoning because it handles input from an unkeyed header in an unsafe way. An unsuspecting user regularly visits the site's home page. To solve this lab, poison the cache with a response that executes alert(document.cookie) in the visitor's browser.  
@@ -23,7 +23,7 @@ Labs: https://portswigger.net/web-security/all-labs#web-cache-poisoning
 
 Placeholder.
 
-## 0x02: Web cache poisoning with an unkeyed cookie
+## Challenge 2: Web cache poisoning with an unkeyed cookie
 
 > [!QUOTE]+ Problem Prompt
 > This lab is vulnerable to web cache poisoning because cookies aren't included in the cache key. An unsuspecting user regularly visits the site's home page. To solve this lab, poison the cache with a response that executes alert(1) in the visitor's browser.
@@ -37,7 +37,7 @@ Next: can we close the bracket?
 Fail.js
 Final payload
 
-## 0x03: Web cache poisoning with multiple headers
+## Challenge 3: Web cache poisoning with multiple headers
 
 > [!QUOTE]+ Problem Prompt
 > This lab contains a web cache poisoning vulnerability that is only exploitable when you use multiple headers to craft a malicious request. A user visits the home page roughly once a minute. To solve this lab, poison the cache with a response that executes alert(document.cookie) in the visitor's browser.
@@ -49,7 +49,7 @@ Gotta send 2x poison to make sure - visitor only pops once a minute
 
 Key takeaway: you can hijack JS files - don't forget about them during enum!
 
-## 0x04: Targeted web cache poisoning using an unknown header
+## Challenge 4: Targeted web cache poisoning using an unknown header
 
 > [!QUOTE]+ Problem Prompt
 > This lab is vulnerable to web cache poisoning. A victim user will view any comments that you post. To solve this lab, you need to poison the cache with a response that executes alert(document.cookie) in the visitor's browser. However, you also need to make sure that the response is served to the specific subset of users to which the intended victim belongs.
@@ -61,38 +61,38 @@ Does it go poison resource -> comment points to resource -> profit?
 
 Insert img tag that points to exploit server to get the victim's UA: `Mozilla/5.0 (Victim) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36`
 
-## 0x05: Web cache poisoning via an unkeyed query string
+## Challenge 5: Web cache poisoning via an unkeyed query string
 
 Placeholder.
 
-## 0x06: Web cache poisoning via an unkeyed query parameter
+## Challenge 6: Web cache poisoning via an unkeyed query parameter
 
 Placeholder.
 
-## 0x07: Parameter cloaking
+## Challenge 7: Parameter cloaking
 
 Placeholder.
 
-## 0x08: Web cache poisoning via a fat GET request
+## Challenge 8: Web cache poisoning via a fat GET request
 
 Placeholder.
 
-## 0x09: URL normalization
+## Challenge 9: URL normalization
 
 Placeholder.
 
-## 0x0A: Web cache poisoning to exploit a DOM vulnerability via a cache with strict cacheability criteria
+## Challenge 10: Web cache poisoning to exploit a DOM vulnerability via a cache with strict cacheability criteria
 
 Placeholder.
 
-## 0x0B: Combining web cache poisoning vulnerabilities
+## Challenge 11: Combining web cache poisoning vulnerabilities
 
 Placeholder.
 
-## 0x0C: Cache key injection
+## Challenge 12: Cache key injection
 
 Placeholder.
 
-## 0x0D: Internal cache poisoning
+## Challenge 13: Internal cache poisoning
 
 Placeholder.
