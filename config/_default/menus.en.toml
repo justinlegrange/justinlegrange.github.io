@@ -27,9 +27,9 @@
  weight = 10
 
 [[main]]
- name = "Projects"
+ name = "Kubernetes"
  parent = "DevOps"
- pageRef = "categories/projects"
+ pageRef = "categories/kubernetes"
  weight = 20
 
 [[main]]
@@ -49,15 +49,25 @@
  pageRef = "categories/PSWA"
  weight = 20
 
+[[main]]
+ name = "Projects"
+ pageRef = "categories/projects"
+ weight = 30
+
 # [[main]]
 #  name = "All Posts"
 #  pageRef = "posts"
 #  weight = 40
 
 [[main]]
+  name = "Resume"
+  pageRef = "resume"
+  weight = 40
+
+[[main]]
   name = "About Me"
   pageRef = "about"
-  weight = 30
+  weight = 50
 
 
 # -- Footer Menu --
