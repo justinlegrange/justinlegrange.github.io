@@ -10,7 +10,7 @@ categories: ["DevOps", "KodeKloud", "Sysadmin"]
 tags: ["devops", "linux", "kodekloud", "bash", "sysadmin", "cron"]
 ---
 
-## Intro
+## Introduction
 
 Welcome to my series of blog posts centered around [KodeKloud's "100 Days of DevOps" challenge](https://kodekloud.com/100-days-of-devops)! In case you haven't looked at it before, KodeKloud's 100 Days of DevOps is a fantastic challenge series where they ask you to solve a lot of common server administration/DevOps specific tasks in interactive labs using their KodeKloud Engineer platform. 
 

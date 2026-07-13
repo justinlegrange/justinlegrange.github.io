@@ -4,7 +4,8 @@ date: 2026-02-05 # YYYY-MM-DD
 lastMod: 2026-06-24
 summary: "Solutions for Portswigger's Information Disclosure academy module."
 draft: true
-series: ["Portswigger Web Academy"]
+# series: ["Portswigger Web Academy"]
+# series_order: 1
 categories: ["PSWA", "hacking"]
 tags: ["appsec", "pswa", "websec", "hacking"]
 ---

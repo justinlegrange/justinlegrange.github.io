@@ -4,7 +4,8 @@ date: 2025-12-02 # YYYY-MM-DD
 lastMod: 2026-06-24
 summary: "Solutions for Portswigger's Web Cache Poisoning academy module."
 draft: true
-series: ["Portswigger Web Academy"]
+# series: ["Portswigger Web Academy"]
+# series_order: 1
 categories: ["PSWA", "hacking"]
 tags: ["appsec", "pswa", "websec", "hacking"]
 ---
