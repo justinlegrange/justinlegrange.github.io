@@ -33,4 +33,5 @@ go.work.sum
 
 # Hugo specific
 /public
+/public/sitemap.xml
 /resources/_gen
