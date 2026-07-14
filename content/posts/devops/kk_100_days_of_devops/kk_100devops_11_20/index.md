@@ -12,7 +12,9 @@ tags: ["devops", "linux", "nginx", "mysql"]
 
 ## Introduction
 
-Welcome back all to another post in the 100 Days of DevOps series! This set of problems has another round of Linux configuration and troubleshooting, interacting with various services - all key skills. You'll see Nginx, MySQL, networking, and more in this group. You'll likely see some notes and chickenscratch as I work my way through writing these up - know that I'm keeping my notes close and will turn them into something much better sounding soon!
+Welcome back all to another post in the 100 Days of DevOps series! This set of problems has another round of Linux configuration and troubleshooting, interacting with various services - all key skills. You'll see Nginx, MySQL, networking, and more in this group; this set of problems is particularly heavy on troubleshooting, which I'm always a big fan of. If you missed it, make sure to check out [the first post in the series](../kk_100devops_01_10/index.md) - I think you'll enjoy it if you're into this stuff as much as I am!
+
+You'll also likely see some notes and WIP chickenscratch as I work my way through writing these solutions up - just know that I'm keeping my notes close and will turn them into something much better sounding soon. With all that out of the way - on to Day 11!
 
 > [!IMPORTANT]+ Spoiler alert!
 > In case you're squeamish about this sort of thing, there are a bunch of spoilers ahead - proceed at your own (self-learning) risk. I'll be diving into the nitty-gritty behind solutions where I can, so hopefully you'll be able to learn a thing or two.  
