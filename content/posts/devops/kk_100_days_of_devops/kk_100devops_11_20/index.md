@@ -12,7 +12,7 @@ tags: ["devops", "linux", "nginx", "mysql"]
 
 ## Introduction
 
-Welcome back all to another post in the 100 Days of DevOps series! 
+Welcome back all to another post in the 100 Days of DevOps series! This set of problems has another round of Linux configuration and troubleshooting, interacting with various services - all key skills. You'll see Nginx, MySQL, networking, and more in this group. You'll likely see some notes and chickenscratch as I work my way through writing these up - know that I'm keeping my notes close and will turn them into something much better sounding soon!
 
 > [!IMPORTANT]+ Spoiler alert!
 > In case you're squeamish about this sort of thing, there are a bunch of spoilers ahead - proceed at your own (self-learning) risk. I'll be diving into the nitty-gritty behind solutions where I can, so hopefully you'll be able to learn a thing or two.  
@@ -467,21 +467,277 @@ And with that, our web service is ready to go for this task!
 
 ## Day 13: IPtables Installation and Configuration
 
-Placeholder.
+> [!QUOTE]+ Problem Prompt
+> We have one of our websites up and running on our Nautilus infrastructure in Stratos DC. Our security team has raised a concern that right now Apache’s port i.e 8084 is open for all since there is no firewall installed on these hosts. So we have decided to add some security layer for these hosts and after discussions and recommendations we have come up with the following requirements:
+> 
+> 1. Install iptables and all its dependencies on each app host.
+> 2. Block incoming port 8084 on all apps for everyone except for LBR host.
+> 3. Make sure the rules remain, even after system reboot.
+{icon="circle-question"}
+
+We'll start with stapp01
+```
+[tony@stapp01 ~]$ dnf list --installed | grep iptables
+iptables-libs.x86_64                           1.8.10-11.el9                    @baseos       
+iptables-services.noarch                       1.8.10-11.1.el9                  @epel
+```
+have libs, but not the binaries - install
+```console
+[tony@stapp01 ~]$ sudo dnf install -y iptables
+Last metadata expiration check: 0:15:24 ago on Tue Jul 14 14:32:04 2026.
+Dependencies resolved.
+=================================================================================================================
+ Package                            Architecture         Version                        Repository          Size
+=================================================================================================================
+Installing:
+ iptables-legacy                    x86_64               1.8.10-11.1.el9                epel                50 k
+Installing dependencies:
+ iptables-legacy-libs               x86_64               1.8.10-11.1.el9                epel                38 k
+
+Transaction Summary
+=================================================================================================================
+Install  2 Packages
+
+Total download size: 88 k
+Installed size: 184 k
+Downloading Packages:
+(1/2): iptables-legacy-libs-1.8.10-11.1.el9.x86_64.rpm                           2.9 MB/s |  38 kB     00:00    
+(2/2): iptables-legacy-1.8.10-11.1.el9.x86_64.rpm                                3.4 MB/s |  50 kB     00:00    
+-----------------------------------------------------------------------------------------------------------------
+Total                                                                            636 kB/s |  88 kB     00:00     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                                         1/1 
+  Installing       : iptables-legacy-libs-1.8.10-11.1.el9.x86_64                                             1/2 
+  Installing       : iptables-legacy-1.8.10-11.1.el9.x86_64                                                  2/2 
+  Running scriptlet: iptables-legacy-1.8.10-11.1.el9.x86_64                                                  2/2 
+  Verifying        : iptables-legacy-1.8.10-11.1.el9.x86_64                                                  1/2 
+  Verifying        : iptables-legacy-libs-1.8.10-11.1.el9.x86_64                                             2/2 
+
+Installed:
+  iptables-legacy-1.8.10-11.1.el9.x86_64               iptables-legacy-libs-1.8.10-11.1.el9.x86_64              
+
+Complete!
+```
+need to enable the service
+```
+[tony@stapp01 ~]$ sudo systemctl enable --now iptables.service
+Created symlink /etc/systemd/system/multi-user.target.wants/iptables.service → /usr/lib/systemd/system/iptables.service.
+[tony@stapp01 ~]$ sudo systemctl status iptables.service
+● iptables.service - IPv4 firewall with iptables
+     Loaded: loaded (/usr/lib/systemd/system/iptables.service; enabled; preset: disabled)
+     Active: active (exited) since Tue 2026-07-14 20:48:11 UTC; 10s ago
+    Process: 46099 ExecStart=/usr/libexec/iptables/iptables.init start (code=exited, status=0/SUCCESS)
+   Main PID: 46099 (code=exited, status=0/SUCCESS)
+        CPU: 12ms
+
+Jul 14 20:48:11 stapp01 systemd[1]: Starting IPv4 firewall with iptables...
+Jul 14 20:48:11 stapp01 iptables.init[46099]: iptables: Applying firewall rules: [  OK  ]
+Jul 14 20:48:11 stapp01 systemd[1]: Finished IPv4 firewall with iptables.
+```
+
+```
+[tony@stapp01 ~]$ sudo iptables -L
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination
+```
+
+testing from jmp box
+```console
+thor@jump-host ~$ curl -I http://stapp01:8084
+HTTP/1.1 403 Forbidden
+Date: Tue, 14 Jul 2026 20:31:08 GMT
+Server: Apache/2.4.62 (CentOS Stream)
+Last-Modified: Fri, 12 Dec 2025 14:14:29 GMT
+ETag: "296919-645c1e12b9b40"
+Accept-Ranges: bytes
+Content-Length: 2713881
+Content-Type: text/html; charset=UTF-8
+```
+
+first, add a rule allowing SSH - otherwise we won't be able to connect
+then we append a reject all
+then we add an allow for stlb01 to reach the port
+```console
+[tony@stapp01 ~]$ sudo iptables -I INPUT -p TCP --dport 22 -j ACCEPT
+[tony@stapp01 ~]$ sudo iptables -A INPUT -p TCP -j REJECT
+[tony@stapp01 ~]$ sudo iptables -I INPUT -p TCP --dport 8084 -s stlb01 -j ACCEPT
+[tony@stapp01 ~]$ sudo iptables -L
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     tcp  --  10-244-29-245.stlb01.3vvlmha5kdtyhwcz.svc.cluster.local  anywhere             tcp dpt:rfe
+ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:ssh
+REJECT     tcp  --  anywhere             anywhere             reject-with icmp-port-unreachable
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination
+```
+
+testing rule
+```console
+thor@jump-host ~$ curl -I http://stapp01:8084
+curl: (7) Failed to connect to stapp01 port 8084: Connection refused
+```
+
+and on load balancer
+```console
+[loki@stlb01 ~]$ curl -I http://stapp01:8084
+HTTP/1.1 403 Forbidden
+Date: Tue, 14 Jul 2026 20:35:30 GMT
+Server: Apache/2.4.62 (CentOS Stream)
+Last-Modified: Fri, 12 Dec 2025 14:14:29 GMT
+ETag: "296919-645c1e12b9b40"
+Accept-Ranges: bytes
+Content-Length: 2713881
+Content-Type: text/html; charset=UTF-8
+```
+
+now, saving
+```console
+[tony@stapp01 ~]$ sudo sh -c '/sbin/iptables-save > /etc/sysconfig/iptables'
+```
 
 ## Day 14: Linux Process Troubleshooting
 
-Placeholder.
+> [!QUOTE]+ Problem Prompt
+> The production support team of xFusionCorp Industries has deployed some of the latest monitoring tools to keep an eye on every service, application, etc. running on the systems. One of the monitoring systems reported about Apache service unavailability on one of the app servers in Stratos DC.
+> 
+> Identify the faulty app host and fix the issue. Make sure Apache service is up and running on all app hosts. They might not have hosted any code yet on these servers, so you don't need to worry if Apache isn't serving any pages. Just make sure the service is up and running. Also, make sure Apache is running on port 8085 on all app servers.
+{icon="circle-question"}
+
+quickly verify which host(s) is the problem
+```console
+thor@jump-host ~$ curl -I http://stapp01:8085
+curl: (7) Failed to connect to stapp01 port 8085: Connection refused
+thor@jump-host ~$ curl -I http://stapp02:8085
+HTTP/1.1 403 Forbidden
+Date: Tue, 14 Jul 2026 21:30:28 GMT
+Server: Apache/2.4.62 (CentOS Stream)
+Last-Modified: Fri, 12 Dec 2025 14:14:29 GMT
+ETag: "296919-645c1e12b9b40"
+Accept-Ranges: bytes
+Content-Length: 2713881
+Content-Type: text/html; charset=UTF-8
+
+thor@jump-host ~$ curl -I http://stapp03:8085
+HTTP/1.1 403 Forbidden
+Date: Tue, 14 Jul 2026 21:30:32 GMT
+Server: Apache/2.4.62 (CentOS Stream)
+Last-Modified: Fri, 12 Dec 2025 14:14:29 GMT
+ETag: "296919-645c1e12b9b40"
+Accept-Ranges: bytes
+Content-Length: 2713881
+Content-Type: text/html; charset=UTF-8
+```
+
+checking service info
+```console
+[tony@stapp01 ~]$ sudo systemctl status httpd.service
+× httpd.service - The Apache HTTP Server
+     Loaded: loaded (/usr/lib/systemd/system/httpd.service; disabled; preset: disabled)
+     Active: failed (Result: exit-code) since Tue 2026-07-14 21:16:53 UTC; 14min ago
+       Docs: man:httpd.service(8)
+    Process: 20807 ExecStart=/usr/sbin/httpd $OPTIONS -DFOREGROUND (code=exited, status=1/FAILURE)
+   Main PID: 20807 (code=exited, status=1/FAILURE)
+     Status: "Reading configuration..."
+        CPU: 34ms
+
+Jul 14 21:16:53 stapp01 systemd[1]: Starting The Apache HTTP Server...
+Jul 14 21:16:53 stapp01 httpd[20807]: AH00558: httpd: Could not reliably determine the server's fully qualified >
+Jul 14 21:16:53 stapp01 httpd[20807]: (98)Address already in use: AH00072: make_sock: could not bind to address >
+Jul 14 21:16:53 stapp01 httpd[20807]: (98)Address already in use: AH00072: make_sock: could not bind to address >
+Jul 14 21:16:53 stapp01 httpd[20807]: no listening sockets available, shutting down
+Jul 14 21:16:53 stapp01 httpd[20807]: AH00015: Unable to open logs
+Jul 14 21:16:53 stapp01 systemd[1]: httpd.service: Main process exited, code=exited, status=1/FAILURE
+Jul 14 21:16:53 stapp01 systemd[1]: httpd.service: Failed with result 'exit-code'.
+Jul 14 21:16:53 stapp01 systemd[1]: Failed to start The Apache HTTP Server.
+```
+
+seeing what took the port:
+```console
+[tony@stapp01 ~]$ sudo ss -antp
+State         Recv-Q        Send-Q                  Local Address:Port                 Peer Address:Port         Process                                                                                                          
+LISTEN        0             128                           0.0.0.0:8080                      0.0.0.0:*             users:(("ttyd",pid=60,fd=11))                                                                                   
+LISTEN        0             128                           0.0.0.0:22                        0.0.0.0:*             users:(("sshd",pid=1466,fd=3))                                                                                  
+LISTEN        0             10                          127.0.0.1:8085                      0.0.0.0:*             users:(("sendmail",pid=20159,fd=4))                                                                             
+ESTAB         0             0                      10.244.234.248:22                   10.244.49.48:35050         users:(("sshd",pid=47384,fd=4),("sshd",pid=47258,fd=4))                                                         
+LISTEN        0             128                              [::]:22                           [::]:*             users:(("sshd",pid=1466,fd=4))
+```
+
+```console
+[tony@stapp01 ~]$ sudo kill 20159
+[tony@stapp01 ~]$ sudo systemctl restart httpd.service
+[tony@stapp01 ~]$ sudo systemctl status httpd.service
+● httpd.service - The Apache HTTP Server
+     Loaded: loaded (/usr/lib/systemd/system/httpd.service; disabled; preset: disabled)
+     Active: active (running) since Tue 2026-07-14 21:32:54 UTC; 6s ago
+       Docs: man:httpd.service(8)
+   Main PID: 48052 (httpd)
+     Status: "Started, listening on: port 8085"
+      Tasks: 177 (limit: 404712)
+     Memory: 15.0M
+        CPU: 61ms
+     CGroup: /system.slice/httpd.service
+             ├─48052 /usr/sbin/httpd -DFOREGROUND
+             ├─48059 /usr/sbin/httpd -DFOREGROUND
+             ├─48060 /usr/sbin/httpd -DFOREGROUND
+             ├─48061 /usr/sbin/httpd -DFOREGROUND
+             └─48062 /usr/sbin/httpd -DFOREGROUND
+
+Jul 14 21:32:54 stapp01 systemd[1]: Starting The Apache HTTP Server...
+Jul 14 21:32:54 stapp01 httpd[48052]: AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 10.244.234.248. Set the 'ServerName' directive globally to sup>
+Jul 14 21:32:54 stapp01 httpd[48052]: Server configured, listening on: port 8085
+Jul 14 21:32:54 stapp01 systemd[1]: Started The Apache HTTP Server.
+```
+
+now if we check from the jb
+```console
+thor@jump-host ~$ curl -I http://stapp01:8085
+HTTP/1.1 403 Forbidden
+Date: Tue, 14 Jul 2026 21:33:21 GMT
+Server: Apache/2.4.62 (CentOS Stream)
+Last-Modified: Fri, 12 Dec 2025 14:14:29 GMT
+ETag: "296919-645c1e12b9b40"
+Accept-Ranges: bytes
+Content-Length: 2713881
+Content-Type: text/html; charset=UTF-8
+```
+
+Done!
 
 ## Day 15: Setup SSL for Nginx
+
+> [!QUOTE]+ Problem Prompt
+> TBD
+{icon="circle-question"}
 
 Placeholder.
 
 ## Day 16: Install and Configure Nginx as an LBR
 
+> [!QUOTE]+ Problem Prompt
+> TBD
+{icon="circle-question"}
+
 Placeholder.
 
 ## Day 17: Install and Configure PostgreSQL
+
+> [!QUOTE]+ Problem Prompt
+> TBD
+{icon="circle-question"}
 
 Placeholder.
 
