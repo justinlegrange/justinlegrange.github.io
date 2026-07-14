@@ -1,13 +1,13 @@
 ---
 title: "KodeKloud's 100 Days of DevOps: Day 11 - 20"
 date: 2025-12-31 # YYYY-MM-DD
-lastMod: 2026-06-24
+lastMod: 2026-07-14
 summary: "A walkthrough for days 11 through 20 of KodeKloud's 100 Days of DevOps challenges."
-draft: true
+# draft: true
 series: ["KodeKloud's 100 Days of DevOps"]
 series_order: 2
 categories: ["DevOps", "KodeKloud"]
-tags: ["devops", "linux", "kodekloud"]
+tags: ["devops", "linux", "nginx", "mysql"]
 ---
 
 ## Introduction
@@ -269,7 +269,201 @@ and open the template in the editor.
 
 ## Day 12: Linux Networking Services
 
-Placeholder.
+> [!QUOTE]+ Problem Prompt
+> Our monitoring tool has reported an issue in Stratos Datacenter. One of our app servers has an issue, as its Apache service is not reachable on port 8088 (which is the Apache port). The service itself could be down, the firewall could be at fault, or something else could be causing the issue.
+>  
+> Use tools like telnet, netstat, etc. to find and fix the issue. Also make sure Apache is reachable from the jump host without compromising any security settings.
+>  
+> Once fixed, you can test the same using command curl http://stapp01:8088 command from jump host.
+>  
+> Note: Please do not try to alter the existing index.html code, as it will lead to task failure.
+{icon="circle-question"}
+
+Okay, so based on the problem prompt we need to be ready to check out the problems bottom-up - we'll start with `ssh`ing over as `tony` and taking a look at the service for `httpd`.
+
+```console
+[tony@stapp01 ~]$ sudo systemctl status httpd.service
+× httpd.service - The Apache HTTP Server
+     Loaded: loaded (/usr/lib/systemd/system/httpd.service; disabled; preset: disabled)
+     Active: failed (Result: exit-code) since Tue 2026-07-14 14:00:23 UTC; 1min 7s ago
+       Docs: man:httpd.service(8)
+    Process: 13177 ExecStart=/usr/sbin/httpd $OPTIONS -DFOREGROUND (code=exited, status=1/FAILURE)
+   Main PID: 13177 (code=exited, status=1/FAILURE)
+     Status: "Reading configuration..."
+        CPU: 34ms
+
+Jul 14 14:00:23 stapp01 systemd[1]: Starting The Apache HTTP Server...
+Jul 14 14:00:23 stapp01 httpd[13177]: AH00558: httpd: Could not reliably determine the server's fully qualified >
+Jul 14 14:00:23 stapp01 httpd[13177]: (98)Address already in use: AH00072: make_sock: could not bind to address >
+Jul 14 14:00:23 stapp01 httpd[13177]: (98)Address already in use: AH00072: make_sock: could not bind to address >
+Jul 14 14:00:23 stapp01 httpd[13177]: no listening sockets available, shutting down
+Jul 14 14:00:23 stapp01 httpd[13177]: AH00015: Unable to open logs
+Jul 14 14:00:23 stapp01 systemd[1]: httpd.service: Main process exited, code=exited, status=1/FAILURE
+Jul 14 14:00:23 stapp01 systemd[1]: httpd.service: Failed with result 'exit-code'.
+Jul 14 14:00:23 stapp01 systemd[1]: Failed to start The Apache HTTP Server.
+```
+
+Based on that error, something else has the port that `httpd` needs to successfully start. In an enterprise situation, you'd likely investigate and need to see what's taking up the port, if another team deployed it, if there are negative knock-on effects of removing the service...you get the gist. In a lab like this, though, we only care about `httpd` getting up and running so we can just nuke the service from orbit once we have a valid process ID. Let's take a look at what's listening on the TCP side with `ss` and the `-p` flag to grab the PID:
+
+```console
+[tony@stapp01 ~]$ sudo ss -antp
+State           Recv-Q           Send-Q                     Local Address:Port                      Peer Address:Port           Process                                                           
+LISTEN          0                128                              0.0.0.0:8080                           0.0.0.0:*               users:(("ttyd",pid=60,fd=11))                                    
+LISTEN          0                128                              0.0.0.0:22                             0.0.0.0:*               users:(("sshd",pid=1576,fd=3))                                   
+LISTEN          0                10                             127.0.0.1:8088                           0.0.0.0:*               users:(("sendmail",pid=12753,fd=4))                              
+ESTAB           0                0                          10.244.49.127:22                       10.244.97.158:42724           users:(("sshd",pid=36880,fd=4),("sshd",pid=36711,fd=4))          
+LISTEN          0                128                                 [::]:22                                [::]:*               users:(("sshd",pid=1576,fd=4))
+[tony@stapp01 ~]$ sudo kill 12753
+```
+
+Now that we've killed off the `sendmail` process, let's try restarting the `httpd` service and with any luck, we'll have a functioning web server. After the service comes up, we confirm it's listening on the correct port with `ss`:
+
+```console
+[tony@stapp01 ~]$ sudo systemctl restart httpd.service
+[tony@stapp01 ~]$ sudo systemctl status httpd.service
+● httpd.service - The Apache HTTP Server
+     Loaded: loaded (/usr/lib/systemd/system/httpd.service; disabled; preset: disabled)
+     Active: active (running) since Tue 2026-07-14 14:02:35 UTC; 9s ago
+       Docs: man:httpd.service(8)
+   Main PID: 37462 (httpd)
+     Status: "Total requests: 0; Idle/Busy workers 100/0;Requests/sec: 0; Bytes served/sec:   0 B/sec"
+      Tasks: 177 (limit: 404712)
+     Memory: 15.0M
+        CPU: 64ms
+     CGroup: /system.slice/httpd.service
+             ├─37462 /usr/sbin/httpd -DFOREGROUND
+             ├─37469 /usr/sbin/httpd -DFOREGROUND
+             ├─37470 /usr/sbin/httpd -DFOREGROUND
+             ├─37471 /usr/sbin/httpd -DFOREGROUND
+             └─37472 /usr/sbin/httpd -DFOREGROUND
+
+Jul 14 14:02:35 stapp01 systemd[1]: Starting The Apache HTTP Server...
+Jul 14 14:02:35 stapp01 httpd[37462]: AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 10.244.49.127. Set the 'ServerName' directive globally to supp>
+Jul 14 14:02:35 stapp01 httpd[37462]: Server configured, listening on: port 8088
+Jul 14 14:02:35 stapp01 systemd[1]: Started The Apache HTTP Server.
+[tony@stapp01 ~]$ sudo ss -antp
+State     Recv-Q    Send-Q       Local Address:Port         Peer Address:Port     Process                                                                                                         
+LISTEN    0         128                0.0.0.0:8080              0.0.0.0:*         users:(("ttyd",pid=60,fd=11))                                                                                  
+LISTEN    0         128                0.0.0.0:22                0.0.0.0:*         users:(("sshd",pid=1576,fd=3))                                                                                 
+ESTAB     0         0            10.244.49.127:22          10.244.97.158:42724     users:(("sshd",pid=36880,fd=4),("sshd",pid=36711,fd=4))                                                        
+LISTEN    0         511                      *:8088                    *:*         users:(("httpd",pid=37472,fd=4),("httpd",pid=37471,fd=4),("httpd",pid=37470,fd=4),("httpd",pid=37462,fd=4))    
+LISTEN    0         128                   [::]:22                   [::]:*         users:(("sshd",pid=1576,fd=4))
+```
+
+Perfect! We now have a functioning `httpd` instance. The next step is to see if we can hit `index.html` locally with `curl`; if it works, we can mostly rule out our web server setup being the culprit.
+
+```
+[tony@stapp01 ~]$ curl -I localhost:8088
+HTTP/1.1 403 Forbidden
+Date: Tue, 14 Jul 2026 14:03:37 GMT
+Server: Apache/2.4.62 (CentOS Stream)
+Last-Modified: Fri, 12 Dec 2025 14:14:29 GMT
+ETag: "296919-645c1e12b9b40"
+Accept-Ranges: bytes
+Content-Length: 2713881
+Content-Type: text/html; charset=UTF-8
+```
+
+A `403 Forbidden` response isn't a good sign - it could mean a few things. The easiest check, though, is to see if we even _have_ an `index.html` living at the document root. To do that, I checked the `httpd.conf` to see where it expects the file, and then a simple `ls -al` to see if the files are present:
+
+```console
+[tony@stapp01 ~]$ grep -i documentroot /etc/httpd/conf/httpd.conf 
+# DocumentRoot: The directory out of which you will serve your
+DocumentRoot "/var/www/html"
+    # access content that does not live under the DocumentRoot.
+[tony@stapp01 ~]$ ls -la /var/www/html
+total 8
+drwxr-xr-x 2 root root 4096 Jun  1 13:26 .
+drwxr-xr-x 4 root root 4096 Jun 10 09:03 ..
+```
+
+Now that we've confirmed the file isn't where it's expected, we have to find it. The easiest way to find a file is, well, to use the aptly-named `find`. Once we've located a valid file, we can copy it over to `/var/www/html` to resolve the `403 Forbidden` error:
+```console
+[tony@stapp01 ~]$ find / -name "index.html" 2>/dev/null
+/usr/share/doc/oniguruma/index.html
+/usr/share/nginx/html/index.html
+/usr/share/testpage/index.html
+/usr/share/httpd/noindex/index.html
+[tony@stapp01 ~]$ sudo cp /usr/share/testpage/index.html /var/www/html
+[tony@stapp01 ~]$ ls -la /var/www/html
+total 2664
+drwxr-xr-x 1 root root    4096 Jul 14 14:04 .
+drwxr-xr-x 1 root root    4096 Jun 10 09:03 ..
+-rw-r--r-- 1 root root 2713881 Jul 14 14:04 index.html
+[tony@stapp01 ~]$ curl -I localhost:8088
+HTTP/1.1 200 OK
+Date: Tue, 14 Jul 2026 14:05:01 GMT
+Server: Apache/2.4.62 (CentOS Stream)
+Last-Modified: Tue, 14 Jul 2026 14:04:52 GMT
+ETag: "296919-65692b0d67019"
+Accept-Ranges: bytes
+Content-Length: 2713881
+Content-Type: text/html; charset=UTF-8
+```
+
+If we test access from `thor@jump-box`, we'll still see that there's an error - `No route to host`. There's a couple of networking issues that could be present for that, but we'll start by identifying which firewall is present on the box (in this case, `iptables`) and then list out the rules that it has enabled:
+
+```console
+[tony@stapp01 ~]$ which firewall-cmd
+/usr/bin/which: no firewall-cmd in (/home/tony/.local/bin:/home/tony/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin)
+[tony@stapp01 ~]$ which iptables
+/usr/sbin/iptables
+[tony@stapp01 ~]$ sudo iptables -L
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     all  --  anywhere             anywhere             state RELATED,ESTABLISHED
+ACCEPT     icmp --  anywhere             anywhere            
+ACCEPT     all  --  anywhere             anywhere            
+ACCEPT     tcp  --  anywhere             anywhere             state NEW tcp dpt:ssh
+REJECT     all  --  anywhere             anywhere             reject-with icmp-host-prohibited
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination         
+REJECT     all  --  anywhere             anywhere             reject-with icmp-host-prohibited
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination
+```
+
+At first, you might think that there's nothing blocking - so what gives? `iptables` rules process top-to-bottom, meaning that if it doesn't match a rule, it continues down the list. Since we don't have an explicit `ACCEPT` rule set up for port 8088, it slides all the way to the `REJECT` all at the end of the `INPUT` chain, ultimately leading to any outside source being stopped from connecting to our web server.
+
+To fix this, we need to add a rule to the top of the chain (or at least _above_ the `REJECT` rule).
+
+```
+[tony@stapp01 ~]$ sudo iptables -I INPUT 1 -i eth0 -p TCP --dport 8088 -j ACCEPT
+[tony@stapp01 ~]$ sudo iptables -L
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:radan-http
+ACCEPT     all  --  anywhere             anywhere             state RELATED,ESTABLISHED
+ACCEPT     icmp --  anywhere             anywhere            
+ACCEPT     all  --  anywhere             anywhere            
+ACCEPT     tcp  --  anywhere             anywhere             state NEW tcp dpt:ssh
+REJECT     all  --  anywhere             anywhere             reject-with icmp-host-prohibited
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination         
+REJECT     all  --  anywhere             anywhere             reject-with icmp-host-prohibited
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination
+```
+
+Now that we've added that rule, we test back from `thor@jump-box` to see if we can reach the web service from outside:
+
+```console
+[thor@jump-host ~]$ curl -I http://stapp01:8088
+HTTP/1.1 200 OK
+Date: Tue, 14 Jul 2026 14:09:41 GMT
+Server: Apache/2.4.62 (CentOS Stream)
+Last-Modified: Tue, 14 Jul 2026 14:04:52 GMT
+ETag: "296919-65692b0d67019"
+Accept-Ranges: bytes
+Content-Length: 2713881
+Content-Type: text/html; charset=UTF-8
+```
+
+And with that, our web service is ready to go for this task!
 
 ## Day 13: IPtables Installation and Configuration
 
@@ -291,33 +485,37 @@ Placeholder.
 
 Placeholder.
 
-## Day 18: Configure LAMP Server
+## Day 18: Configure LAMP Server (OLD)
 
-> [!QUOTE] Problem Prompt
+> [!QUOTE]+ Problem Prompt
 > xFusionCorp Industries is planning to host a WordPress website on their infra in Stratos Datacenter. They have already done infrastructure configuration—for example, on the storage server they already have a shared directory /vaw/www/html that is mounted on each app host under /var/www/html directory. Please perform the following steps to accomplish the task:  
 > 
-> a. Install httpd, php and its dependencies on all app hosts.  
-> b. Apache should serve on port 5004 within the apps.  
-> c. Install/Configure MariaDB server on DB Server.  
-> d. Create a database named kodekloud_db5 and create a database user named kodekloud_cap identified as password B4zNgHA7Ya. Further make sure this newly created user is able to perform all operation on the database you created.  
-> e. Finally you should be able to access the website on LBR link, by clicking on the App button on the top bar. You should see a message like App is able to connect to the database using user kodekloud_cap
+> A. Install httpd, php and its dependencies on all app hosts.  
+> B. Apache should serve on port 5004 within the apps.  
+> C. Install/Configure MariaDB server on DB Server.  
+> D. Create a database named kodekloud_db5 and create a database user named kodekloud_cap identified as password B4zNgHA7Ya. Further make sure this newly created user is able to perform all operation on the database you created.  
+> E. Finally you should be able to access the website on LBR link, by clicking on the App button on the top bar. You should see a message like App is able to connect to the database using user kodekloud_cap  
+{icon="circle-question"}
 
-Okay, this shouldn't be too bad. Let's take stock of what's already on the servers and see what we need to get this running. I'm starting on `stapp01` and will repeat the steps where needed on the other app servers.
+> [!WARNING]+ Problem Change
+> It looks like at some point after I wrote this, KodeKloud retired the old problem and swapped it out for a new one. I'm leaving this in here so that you can see it - it's got some fun details scattered inside. It's not structured the same as my old ones and may not be fully complete, but I can't go back and re-do or check it now that they've replaced the problem set!
+{icon="triangle-exclamation"}
 
-First up, what packages are installed? Running:
+Okay, this shouldn't be too bad. Let's take stock of what's already on the servers and see what we need to get this running. I'm starting on `stapp01` and will repeat the steps where needed on the other app servers. First up, what packages are installed? We can check the installed packages with `dnf` and grep to filter:
 
-```bash
-dnf list --installed | grep httpd
-dnf list --installed | grep php
+```console
+[tony@stapp01 ~]$ dnf list --installed | grep httpd
+[tony@stapp01 ~]$ dnf list --installed | grep php
 ```
-doesn't net us much, just blank lines. We'll need to install both the server and the language. To do that, we run the following:
+It looks like we'll need to install both the server and the language. To do that, we run the following:
 
-```bash
-$ sudo dnf install httpd php
+```console
+[tony@stapp01 ~]$ sudo dnf install -y httpd php
 ```
 
- Next, let's check the app we're deploying:
-```bash
+Next, let's check out the structure of the app we're deploying:
+
+```console
 [tony@stapp01 ~]$ ls -la /var/www/html
 total 12
 drwxr-xr-x 2 root root 4096 Jan  1 03:38 .
@@ -342,36 +540,38 @@ echo "App is able to connect to the database using user $dbuser";
 
 Trying to run the file with `sudo php /var/www/html/index.php` produces the error `Fatal error: Call to undefined function mysqli_connect()` - meaning we don't have the MySQL library installed. [After doing some searching](https://stackoverflow.com/questions/25281467/fatal-error-call-to-undefined-function-mysqli-connect), the way to rectify this is to install the `php-mysqli` package (`php-mysqlnd` on Fedora's repositories) using either `yum` or `dnf`.
 
-```bash
-$ sudo dnf install php-mysqlnd
+```console
+[tony@stapp01 ~]$ sudo dnf install php-mysqlnd
 ```
 
 Next up - we need to set Apache to bind to the correct port so that way the load balancer can reach the server. The default config for `httpd` on Fedora lives at `/etc/httpd/conf/httpd.conf`. You can edit it using Vi, Vim, Nano, or any other text or stream editors you know - I'm using `sed` for repeatability and consistency across the other servers.
 
-```
-sudo sed -i 's/Listen 80/Listen 5004/g' /etc/httpd/conf/httpd.conf
-sudo systemctl restart httpd
+```console
+[tony@stapp01 ~]$ sudo sed -i 's/Listen 80/Listen 5004/g' /etc/httpd/conf/httpd.conf
+[tony@stapp01 ~]$ sudo systemctl restart httpd
 ```
 
 After restarting the service, you can verify the changes are in effect by running `systemctl status httpd` or checking the listening ports by using `sudo ss -antp | grep 5004` and making sure everything appears correct. With that, we can move over to the database portion of the setup.
 
 The database first needs installation - confirm that MariaDB isn't already present using `dnf`, and then run the following if it's missing:
 
-```bash
-$ sudo dnf install mariadb-server
-$ sudo systemctl enable --now mariadb
+```console
+[tony@stapp01 ~]$ sudo dnf install mariadb-server
+[tony@stapp01 ~]$ sudo systemctl enable --now mariadb
 ```
 
 Once it's installed and the service is available, we can start configuring the defaults. Run through the `mysql_secure_installation` script, choosing options as you go along - most of the defaults are fine - and then edit the bind-address in our MariaDB configuration to listen on `0.0.0.0` to accept remote connections.
-```
-sudo mysql_secure_installation
-sudo vi /etc/my.cnf.d/mariadb-server.cnf, uncomment the bind-address line
+
+```console
+[tony@stapp01 ~]$ sudo mysql_secure_installation
+[tony@stapp01 ~]$ # We'll uncomment the bind-address line with vi
+[tony@stapp01 ~]$ sudo vi /etc/my.cnf.d/mariadb-server.cnf 
 ```
 
-Finally, we need to set up the database user so that our apps can have access to run queries, update tables, etc. The demo site doesn't do any of that, but will just check if the connection is live in the `mysqli_connect` call from the code at the beginning of this section. I chose to limit the IP range to 172.16.X, since that's what the containers were running for both 
+Finally, we need to set up the database user so that our apps can have access to run queries, update tables, etc. The demo site doesn't do any of that, but will just check if the connection is live in the `mysqli_connect` call from the code at the beginning of this section. I chose to limit the IP range to 172.16.X, since that's what range the containers were running with for both IP addresses:
 
-```
-$ sudo mysql -u root -p
+```console
+[tony@stapp01 ~]$ sudo mysql -u root -p
 Enter password:
 MariaDB [(none)]> CREATE DATABASE kodekloud_db5;
 MariaDB [(none)]> CREATE USER 'kodekloud_cap'@'172.16.%' IDENTIFIED BY 'B4zNgHA7Ya';
@@ -379,19 +579,28 @@ MariaDB [(none)]> GRANT ALL PRIVILEGES ON kodekloud_db5.* TO 'kodekloud_cap'@'17
 MariaDB [(none)]> FLUSH PRIVILEGES;
 ```
 
-Remote connection: https://mariadb.com/docs/server/mariadb-quickstart-guides/mariadb-remote-connection-guide  
+## Day 18: Install and Configure DB Server
+> [!QUOTE]+ Problem Prompt
+> We need to setup a database server on Nautilus DB Server in Stratos Datacenter. Please perform the below given steps on DB Server:
+> 
+> A. Install/Configure MariaDB server.  
+> B. Create a database named kodekloud_db6.  
+> C. Create a user called kodekloud_sam and set its password to BruCStnMT5.  
+> D. Grant full permissions to user kodekloud_sam on database kodekloud_db6.  
+{icon="circle-question"}
 
-
+Placeholder.
 
 ## Day 19: Install and Configure Web Application
 
-> [!QUOTE] Problem Prompt
+> [!QUOTE]+ Problem Prompt
 > xFusionCorp Industries is planning to host two static websites on their infra in Stratos Datacenter. The development of these websites is still in-progress, but we want to get the servers ready. Please perform the following steps to accomplish the task:
 >  
-> a. Install httpd package and dependencies on app server 3.  
-> b. Apache should serve on port 8083.  
-> c. There are two website's backups /home/thor/news and /home/thor/cluster on jump_host. Set them up on Apache in a way that news should work on the link http://localhost:8083/news/ and cluster should work on link http://localhost:8083/cluster/ on the mentioned app server.  
-> d. Once configured you should be able to access the website using curl command on the respective app server, i.e curl http://localhost:8083/news/ and curl http://localhost:8083/cluster/  
+> A. Install httpd package and dependencies on app server 3.  
+> B. Apache should serve on port 8083.  
+> C. There are two website's backups /home/thor/news and /home/thor/cluster on jump_host. Set them up on Apache in a way that news should work on the link http://localhost:8083/news/ and cluster should work on link http://localhost:8083/cluster/ on the mentioned app server.  
+> D. Once configured you should be able to access the website using curl command on the respective app server, i.e curl http://localhost:8083/news/ and curl http://localhost:8083/cluster/  
+{icon="circle-question"}
 
 ssh banner@stapp03
 
@@ -406,15 +615,16 @@ sudo cp -r cluster /var/www/html/cluster
 
 ## Day 20: Configure Nginx + PHP-FPM Using Unix Sock
 
-> [!QUOTE] Problem Prompt
+> [!QUOTE]+ Problem Prompt
 > The Nautilus application development team is planning to launch a new PHP-based application, which they want to deploy on Nautilus infra in Stratos DC. The development team had a meeting with the production support team and they have shared some requirements regarding the infrastructure. Below are the requirements they shared:  
 > 
-> a. Install nginx on app server 2 , configure it to use port 8093 and its document root should be /var/www/html.  
-> b. Install php-fpm version 8.3 on app server 2, it must use the unix socket /var/run/php-fpm/default.sock (create the parent directories if don't exist).  
-> c. Configure php-fpm and nginx to work together.  
-> d. Once configured correctly, you can test the website using curl http://stapp02:8093/index.php command from jump host.  
+> A. Install nginx on app server 2 , configure it to use port 8093 and its document root should be /var/www/html.  
+> B. Install php-fpm version 8.3 on app server 2, it must use the unix socket /var/run/php-fpm/default.sock (create the parent directories if don't exist).  
+> C. Configure php-fpm and nginx to work together.  
+> D. Once configured correctly, you can test the website using curl http://stapp02:8093/index.php command from jump host.  
 >   
 > NOTE: We have copied two files, index.php and info.php, under /var/www/html as part of the PHP-based application setup. Please do not modify these files.
+{icon="circle-question"}
 
 
 ssh steve@stapp02
