@@ -1,7 +1,7 @@
 ---
 title: "KodeKloud's 100 Days of DevOps: Day 11 - 20"
 date: 2025-12-31 # YYYY-MM-DD
-lastMod: 2026-07-14
+lastMod: 2026-07-15
 summary: "A walkthrough for days 11 through 20 of KodeKloud's 100 Days of DevOps challenges."
 # draft: true
 series: ["KodeKloud's 100 Days of DevOps"]
