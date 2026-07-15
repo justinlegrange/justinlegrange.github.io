@@ -983,10 +983,46 @@ Welcome to xFusionCorp Industries!
 ## Day 17: Install and Configure PostgreSQL
 
 > [!QUOTE]+ Problem Prompt
-> TBD
+> The Nautilus application development team has shared that they are planning to deploy one newly developed application on Nautilus infra in Stratos DC. The application uses PostgreSQL database, so as a pre-requisite we need to set up PostgreSQL database server as per requirements shared below:
+> 
+> PostgreSQL database server is already installed on the Nautilus database server.  
+> A. Create a database user kodekloud_pop and set its password to ksH85UJjhb.  
+> B. Create a database kodekloud_db1 and grant full permissions to user kodekloud_pop on this database.  
+> 
+> Note: Please do not try to restart PostgreSQL server service.
 {icon="circle-question"}
 
-Placeholder.
+This one's much, much quicker than the last few - all we have to do is some PostgreSQL management. To start, let's connect to `stdb01` as `peter` and verify that PostgreSQL is actually installed:
+
+```console
+[peter@stdb01 ~]$ dnf list --installed | grep postg
+postgresql.x86_64                              13.23-3.el9                      @appstream    
+postgresql-contrib.x86_64                      13.23-3.el9                      @appstream    
+postgresql-private-libs.x86_64                 13.23-3.el9                      @appstream    
+postgresql-server.x86_64                       13.23-3.el9                      @appstream
+```
+
+And now that we've done that, they request that we give a user full access to a database. To do that, we need to do a few intermediate steps:
+- Create a the `kodekloud_db1` database
+- Create the `kodekloud_pop` user
+- Grant all of the available privileges on `kodekloud_db1` to `kodekloud_pop`
+
+This is easily done with a few quick commands:
+
+```console
+[peter@stdb01 ~]$ psql -U postgres
+psql (13.23)
+Type "help" for help.
+
+postgres=# CREATE DATABASE kodekloud_db1;
+CREATE DATABASE
+postgres=# CREATE USER kodekloud_pop WITH PASSWORD 'ksH85UJjhb';
+CREATE ROLE
+kodekloud_db1=# GRANT ALL PRIVILEGES ON DATABASE kodekloud_db1 TO kodekloud_pop;
+GRANT
+```
+
+Done!
 
 ## Day 18: Configure LAMP Server (OLD)
 
@@ -1087,12 +1123,85 @@ MariaDB [(none)]> FLUSH PRIVILEGES;
 > We need to setup a database server on Nautilus DB Server in Stratos Datacenter. Please perform the below given steps on DB Server:
 > 
 > A. Install/Configure MariaDB server.  
-> B. Create a database named kodekloud_db6.  
-> C. Create a user called kodekloud_sam and set its password to BruCStnMT5.  
-> D. Grant full permissions to user kodekloud_sam on database kodekloud_db6.  
+> B. Create a database named kodekloud_db3.  
+> C. Create a user called kodekloud_top and set its password to YchZHRcLkL.  
+> D. Grant full permissions to user kodekloud_top on database kodekloud_db3.   
 {icon="circle-question"}
 
-Placeholder.
+This one is basically identical to Day 17; the only difference is that we need to install MariaDB first. As always, check with `dnf` to see if the `mariadb` and `mariadb-server` packages are installed - spoiler alert, they're not - and then install them with `dnf`:
+
+```
+[peter@stdb01 ~]$ sudo dnf install mariadb mariadb-server
+Last metadata expiration check: 0:03:53 ago on Wed Jul 15 22:02:51 2026.
+Dependencies resolved.
+=======================================================================================================================================
+ Package                                    Architecture           Version                             Repository                 Size
+=======================================================================================================================================
+Installing:
+ mariadb                                    x86_64                 3:10.5.29-4.el9                     appstream                 1.7 M
+ mariadb-server                             x86_64                 3:10.5.29-4.el9                     appstream                 9.7 M
+Installing dependencies:
+ iproute                                    x86_64                 6.17.0-2.el9                        baseos                    866 k
+ libaio                                     x86_64                 0.3.111-13.el9                      baseos                     24 k
+
+                        [...]
+
+Installed:
+  iproute-6.17.0-2.el9.x86_64                                    libaio-0.3.111-13.el9.x86_64                                         
+  libbpf-2:1.5.0-3.el9.x86_64                                    mariadb-3:10.5.29-4.el9.x86_64                                       
+  mariadb-backup-3:10.5.29-4.el9.x86_64                          mariadb-common-3:10.5.29-4.el9.x86_64                                
+  mariadb-connector-c-3.2.6-1.el9.x86_64                         mariadb-connector-c-config-3.2.6-1.el9.noarch                        
+  mariadb-errmsg-3:10.5.29-4.el9.x86_64                          mariadb-gssapi-server-3:10.5.29-4.el9.x86_64                         
+  mariadb-server-3:10.5.29-4.el9.x86_64                          mariadb-server-utils-3:10.5.29-4.el9.x86_64                          
+  perl-DBD-MariaDB-1.21-17.el9.x86_64                            perl-DBI-1.643-9.el9.x86_64                                          
+  perl-File-Copy-2.34-483.el9.noarch                             perl-Math-BigInt-1:1.9998.18-460.el9.noarch                          
+  perl-Math-Complex-1.59-483.el9.noarch                          perl-Sys-Hostname-1.23-483.el9.x86_64                                
+  psmisc-23.4-3.el9.x86_64                                      
+
+Complete!
+```
+
+After installation completes, we need to enable the service and then run the `mariadb-secure-installation` script. For the most part, you should be able to stick with the default options it presents:
+
+```
+[peter@stdb01 ~]$ sudo systemctl status mariadb.service
+○ mariadb.service - MariaDB 10.5 database server
+     Loaded: loaded (/usr/lib/systemd/system/mariadb.service; disabled; preset: disabled)
+     Active: inactive (dead)
+       Docs: man:mariadbd(8)
+             https://mariadb.com/kb/en/library/systemd/
+[peter@stdb01 ~]$ sudo systemctl enable --now mariadb.service
+Created symlink /etc/systemd/system/mysql.service → /usr/lib/systemd/system/mariadb.service.
+Created symlink /etc/systemd/system/mysqld.service → /usr/lib/systemd/system/mariadb.service.
+Created symlink /etc/systemd/system/multi-user.target.wants/mariadb.service → /usr/lib/systemd/system/mariadb.service.
+[peter@stdb01 ~]$ sudo mariadb-secure-installation
+                      [...]
+```
+
+And with that, we have a MariaDB server up and running! Now we just need to authenticate, create a database and user, and grant privileges like before. Just like with PostgreSQL, it's relatively straightforward with the `mysql` CLI:
+
+```console
+[peter@stdb01 ~]$ sudo mysql -u root
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 15
+Server version: 10.5.29-MariaDB MariaDB Server
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> CREATE DATABASE kodekloud_db3;
+Query OK, 1 row affected (0.000 sec)
+
+MariaDB [(none)]> CREATE USER kodekloud_top IDENTIFIED BY 'YchZHRcLkL';
+Query OK, 0 rows affected (0.000 sec)
+
+MariaDB [kodekloud_db3]> GRANT ALL PRIVILEGES ON kodekloud_db3.* TO kodekloud_top;
+Query OK, 0 rows affected (0.000 sec)
+```
+
+And as before, that's it - we've given the user all the privileges requested. On to Day 19!
+
 
 ## Day 19: Install and Configure Web Application
 
