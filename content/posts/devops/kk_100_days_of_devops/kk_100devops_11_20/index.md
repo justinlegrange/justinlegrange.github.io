@@ -614,7 +614,8 @@ Now all that's left is to repeat the process for both `stapp02` and `stapp03`!
 > Identify the faulty app host and fix the issue. Make sure Apache service is up and running on all app hosts. They might not have hosted any code yet on these servers, so you don't need to worry if Apache isn't serving any pages. Just make sure the service is up and running. Also, make sure Apache is running on port 8085 on all app servers.
 {icon="circle-question"}
 
-quickly verify which host(s) is the problem
+From the problem prompt, we know that one or more hosts have _some kind of issue_. Since that's nebulous and we know the final desired state, i.e. Apache is up and running on port 8085, let's see if we can call the service on each of the hosts as-is:
+
 ```console
 thor@jump-host ~$ curl -I http://stapp01:8085
 curl: (7) Failed to connect to stapp01 port 8085: Connection refused
@@ -639,7 +640,8 @@ Content-Length: 2713881
 Content-Type: text/html; charset=UTF-8
 ```
 
-checking service info
+Right off the bat, we know that `stapp01` has issues - and it's likely the only one, given `stapp02` and `stapp03` return the same response to our `curl`. We'll SSH in to `stapp01` and start poking around. Let's start with the service status to see if that nets us any good troubleshooting info:
+
 ```console
 [tony@stapp01 ~]$ sudo systemctl status httpd.service
 × httpd.service - The Apache HTTP Server
@@ -662,7 +664,8 @@ Jul 14 21:16:53 stapp01 systemd[1]: httpd.service: Failed with result 'exit-code
 Jul 14 21:16:53 stapp01 systemd[1]: Failed to start The Apache HTTP Server.
 ```
 
-seeing what took the port:
+From that error output, we can see that the service can't get the port it's requesting - let's see if there's something else taking up the port using `ss` with the PID flag:
+
 ```console
 [tony@stapp01 ~]$ sudo ss -antp
 State         Recv-Q        Send-Q                  Local Address:Port                 Peer Address:Port         Process                                                                                                          
@@ -672,6 +675,8 @@ LISTEN        0             10                          127.0.0.1:8085          
 ESTAB         0             0                      10.244.234.248:22                   10.244.49.48:35050         users:(("sshd",pid=47384,fd=4),("sshd",pid=47258,fd=4))                                                         
 LISTEN        0             128                              [::]:22                           [::]:*             users:(("sshd",pid=1466,fd=4))
 ```
+
+So there's a `sendmail` instance running once again - as mentioned in Day 12, we'd normally take more care, but in this lab scenario we'll just kill the process that's taking the port and restart our Apache service:
 
 ```console
 [tony@stapp01 ~]$ sudo kill 20159
@@ -699,7 +704,8 @@ Jul 14 21:32:54 stapp01 httpd[48052]: Server configured, listening on: port 8085
 Jul 14 21:32:54 stapp01 systemd[1]: Started The Apache HTTP Server.
 ```
 
-now if we check from the jb
+Now that that's up, we need to check from the jump box. That's easily done with our `curl` from earlier:
+
 ```console
 thor@jump-host ~$ curl -I http://stapp01:8085
 HTTP/1.1 403 Forbidden
@@ -712,7 +718,7 @@ Content-Length: 2713881
 Content-Type: text/html; charset=UTF-8
 ```
 
-Done!
+With that, we're finished with this task - on to Day 15!
 
 ## Day 15: Setup SSL for Nginx
 
