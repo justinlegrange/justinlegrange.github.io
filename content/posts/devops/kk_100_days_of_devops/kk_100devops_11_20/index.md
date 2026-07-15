@@ -753,9 +753,9 @@ Created symlink /etc/systemd/system/multi-user.target.wants/nginx.service → /u
                   [...]
 ```
 
-If you're unfamiliar with how Nginx does things, all of the configuration files are housed under `/etc/nginx/`. The primary configuration file is `/etc/nginx/nginx.conf`, although occasionally you'll see setups that use drop-ins under `/etc/nginx/conf.d/*.conf`. It's nice for more complex setups, but for our use case with this lab, we'll work with the main file.
+Now that the service is up, we need to configure the site. If you're unfamiliar with how Nginx does things, all of the configuration files are housed under `/etc/nginx/`. The primary configuration file is `/etc/nginx/nginx.conf`, although occasionally you'll see setups that use drop-ins under `/etc/nginx/conf.d/*.conf`. It's nice for more complex setups, but for our use case with this lab, we'll stick to working with just the main configuration file.
 
-Looking through `nginx.conf`, a good bit into the file we'll see the SSL server section:
+Looking through `nginx.conf`, starting on line 56 of the file we'll see the SSL server section:
 
 ```nginx
                   [...]
