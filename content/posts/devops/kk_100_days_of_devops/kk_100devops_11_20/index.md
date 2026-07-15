@@ -840,10 +840,145 @@ Day 15 down!
 ## Day 16: Install and Configure Nginx as an LBR
 
 > [!QUOTE]+ Problem Prompt
-> TBD
+> Day by day traffic is increasing on one of the websites managed by the Nautilus production support team. Therefore, the team has observed a degradation in website performance. Following discussions about this issue, the team has decided to deploy this application on a high availability stack i.e on Nautilus infra in Stratos DC. They started the migration last month and it is almost done, as only the LBR server configuration is pending. Configure LBR server as per the information given below:
+> 
+> A. Install nginx on the LBR (load balancer) server if it is not already installed.
+> B. Configure load-balancing with the http context making use of all App Servers. Ensure that you update only the main Nginx configuration file located at /etc/nginx/nginx.conf.
+> C. Make sure you do not update the apache port that is already defined in the apache configuration on all app servers, also make sure apache service is up and running on all the app servers.
+> D. Once done, you can access the website by running curl http://stlb01:80 in the terminal.
 {icon="circle-question"}
 
-Placeholder.
+So per the prompt, we need to set up load balancing to all of the backend servers. As before, I'm showing `stapp01` and `stlb01`, but make sure to repeat the checks against the other two app servers to ensure completeness! With that said, let's make sure Apache's up on our app servers - there's no point to configuring load balancing on `stlb01` if there's no server to receive the connection:
+
+```console
+[tony@stapp01 ~]$ sudo systemctl status httpd.service
+● httpd.service - The Apache HTTP Server
+     Loaded: loaded (/usr/lib/systemd/system/httpd.service; disabled; preset: disabled)
+     Active: active (running) since Wed 2026-07-15 13:57:36 UTC; 1min 3s ago
+       Docs: man:httpd.service(8)
+   Main PID: 21620 (httpd)
+     Status: "Total requests: 0; Idle/Busy workers 100/0;Requests/sec: 0; Bytes served/sec:   0 B/sec"
+      Tasks: 177 (limit: 404242)
+     Memory: 15.1M
+        CPU: 91ms
+     CGroup: /system.slice/httpd.service
+             ├─21620 /usr/sbin/httpd -DFOREGROUND
+             ├─21627 /usr/sbin/httpd -DFOREGROUND
+             ├─21628 /usr/sbin/httpd -DFOREGROUND
+             ├─21629 /usr/sbin/httpd -DFOREGROUND
+             └─21630 /usr/sbin/httpd -DFOREGROUND
+
+Jul 15 13:57:36 stapp01 systemd[1]: Starting The Apache HTTP Server...
+Jul 15 13:57:36 stapp01 httpd[21620]: AH00558: httpd: Could not reliably determine the server's fully qualified >
+Jul 15 13:57:36 stapp01 httpd[21620]: Server configured, listening on: port 5003
+Jul 15 13:57:36 stapp01 systemd[1]: Started The Apache HTTP Server.
+[tony@stapp01 ~]$ curl localhost:5003
+Welcome to xFusionCorp Industries!
+```
+
+Repeat that same check on all of the app servers. On my end all look good, so let's move on to setting up the actual load balancing piece of Nginx. Let's start by logging into `stlb01` and checking what's already installed:
+
+```console
+[loki@stlb01 ~]$ dnf list --installed | grep nginx
+nginx.x86_64                                   2:1.20.1-30.el9                  @appstream    
+nginx-core.x86_64                              2:1.20.1-30.el9                  @appstream    
+nginx-filesystem.noarch                        2:1.20.1-30.el9                  @appstream
+[loki@stlb01 ~]$ sudo systemctl status nginx.service
+○ nginx.service - The nginx HTTP and reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; disabled; preset: disabled)
+     Active: inactive (dead)
+```
+
+All the components are there, but the service isn't running. Let's enable it:
+
+```console
+[loki@stlb01 ~]$ sudo systemctl enable --now nginx.service
+Created symlink /etc/systemd/system/multi-user.target.wants/nginx.service → /usr/lib/systemd/system/nginx.service.
+[loki@stlb01 ~]$ sudo systemctl status nginx.service
+● nginx.service - The nginx HTTP and reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: disabled)
+     Active: active (running) since Wed 2026-07-15 14:01:44 UTC; 16s ago
+    Process: 23393 ExecStartPre=/usr/bin/rm -f /run/nginx.pid (code=exited, status=0/SUCCESS)
+    Process: 23394 ExecStartPre=/usr/sbin/nginx -t (code=exited, status=0/SUCCESS)
+    Process: 23401 ExecStart=/usr/sbin/nginx (code=exited, status=0/SUCCESS)
+   Main PID: 23408 (nginx)
+      Tasks: 17 (limit: 404712)
+     Memory: 16.1M
+        CPU: 50ms
+     CGroup: /system.slice/nginx.service
+
+[...]
+
+Jul 15 14:01:44 stlb01 systemd[1]: Starting The nginx HTTP and reverse proxy server...
+Jul 15 14:01:44 stlb01 nginx[23394]: nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+Jul 15 14:01:44 stlb01 nginx[23394]: nginx: configuration file /etc/nginx/nginx.conf test is successful
+Jul 15 14:01:44 stlb01 systemd[1]: Started The nginx HTTP and reverse proxy server.
+```
+
+Note the line `nginx: the configuration file /etc/nginx/nginx.conf syntax is ok` in the output. If we make a config change and it goes bad, we'll know instantly by that same output - it'll mention the config is bad and show what the issue is usually. On that note, I like to keep a copy of any configurations I'm changing in case I mangle it beyond quick repairs - we can do that by copying the file to any random extension, but I like using `.bak` to help me visually see what's a backup or not.
+
+```console
+[loki@stlb01 ~]$ sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
+```
+
+With that, we can finally start editing the configuration file. It's handy to have a copy of the [Nginx Admin Guide for Load Balancing](https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/) open on the side in a second window for quick reference.
+
+The changes we'll make our straightforward - first, we'll define a group of servers and ports that our Nginx should forward traffic to; second, we need to define what route is forwarded, and to which server group it goes. We can achieve the first by adding an `upstream <groupName>` block at the first level of the `http` block, like so:
+
+```nginx
+http {
+  upstream webservers {
+      server stapp01:5003;
+      server stapp02:5003;
+      server stapp03:5003;
+  }
+  [...]
+}
+```
+
+Next, we have to tell it where to route - in the `server` block, we'll add a `location` block with the `proxy_pass` directive to tell it to use the `webservers` group we created when someone requests `http://stlb01:80/`:
+
+```nginx
+  server {
+    [...]
+      location / {
+          proxy_pass http://webservers
+      }
+    [...]
+  }
+```
+
+Once we've saved the file, we restart the servces and make sure everything comes up correctly:
+
+```console
+[loki@stlb01 ~]$ sudo systemctl restart nginx.service
+[loki@stlb01 ~]$ sudo systemctl status nginx.service
+● nginx.service - The nginx HTTP and reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: disabled)
+     Active: active (running) since Wed 2026-07-15 14:15:31 UTC; 4s ago
+    Process: 27637 ExecStartPre=/usr/bin/rm -f /run/nginx.pid (code=exited, status=0/SUCCESS)
+    Process: 27638 ExecStartPre=/usr/sbin/nginx -t (code=exited, status=0/SUCCESS)
+    Process: 27645 ExecStart=/usr/sbin/nginx (code=exited, status=0/SUCCESS)
+   Main PID: 27652 (nginx)
+      Tasks: 17 (limit: 404712)
+     Memory: 16.2M
+        CPU: 48ms
+     CGroup: /system.slice/nginx.service
+
+[...]
+
+Jul 15 14:15:31 stlb01 systemd[1]: Starting The nginx HTTP and reverse proxy server...
+Jul 15 14:15:31 stlb01 nginx[27638]: nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+Jul 15 14:15:31 stlb01 nginx[27638]: nginx: configuration file /etc/nginx/nginx.conf test is successful
+Jul 15 14:15:31 stlb01 systemd[1]: Started The nginx HTTP and reverse proxy server.
+```
+
+And finally, we just need to test connectivity from the jump box!
+
+```console
+[thor@jump-host ~]$ curl http://stlb01:80
+Welcome to xFusionCorp Industries!
+```
 
 ## Day 17: Install and Configure PostgreSQL
 
