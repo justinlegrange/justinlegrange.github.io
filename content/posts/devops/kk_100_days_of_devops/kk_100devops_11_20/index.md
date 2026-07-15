@@ -477,13 +477,16 @@ And with that, our web service is ready to go for this task!
 > 3. Make sure the rules remain, even after system reboot.
 {icon="circle-question"}
 
-We'll start with stapp01
+As with other tasks in the series, I'll show all of the examples with `stapp01` only, but you'll need to repeat all of the steps shown against all three of the app servers in order to complete the task successfully. First, let's check the host to see what we have installed so that we can know what to grab from `dnf`:
+
 ```
 [tony@stapp01 ~]$ dnf list --installed | grep iptables
 iptables-libs.x86_64                           1.8.10-11.el9                    @baseos       
 iptables-services.noarch                       1.8.10-11.1.el9                  @epel
 ```
-have libs, but not the binaries - install
+
+So we have the supporting libraries, but not the `iptables` binaries themselves. Let's install them and enable the service so that we can set up the firewall rules.
+
 ```console
 [tony@stapp01 ~]$ sudo dnf install -y iptables
 Last metadata expiration check: 0:15:24 ago on Tue Jul 14 14:32:04 2026.
@@ -496,36 +499,14 @@ Installing:
 Installing dependencies:
  iptables-legacy-libs               x86_64               1.8.10-11.1.el9                epel                38 k
 
-Transaction Summary
-=================================================================================================================
-Install  2 Packages
+                        [...]
 
-Total download size: 88 k
-Installed size: 184 k
-Downloading Packages:
-(1/2): iptables-legacy-libs-1.8.10-11.1.el9.x86_64.rpm                           2.9 MB/s |  38 kB     00:00    
-(2/2): iptables-legacy-1.8.10-11.1.el9.x86_64.rpm                                3.4 MB/s |  50 kB     00:00    
------------------------------------------------------------------------------------------------------------------
-Total                                                                            636 kB/s |  88 kB     00:00     
-Running transaction check
-Transaction check succeeded.
-Running transaction test
-Transaction test succeeded.
-Running transaction
-  Preparing        :                                                                                         1/1 
-  Installing       : iptables-legacy-libs-1.8.10-11.1.el9.x86_64                                             1/2 
-  Installing       : iptables-legacy-1.8.10-11.1.el9.x86_64                                                  2/2 
-  Running scriptlet: iptables-legacy-1.8.10-11.1.el9.x86_64                                                  2/2 
-  Verifying        : iptables-legacy-1.8.10-11.1.el9.x86_64                                                  1/2 
   Verifying        : iptables-legacy-libs-1.8.10-11.1.el9.x86_64                                             2/2 
 
 Installed:
   iptables-legacy-1.8.10-11.1.el9.x86_64               iptables-legacy-libs-1.8.10-11.1.el9.x86_64              
 
 Complete!
-```
-need to enable the service
-```
 [tony@stapp01 ~]$ sudo systemctl enable --now iptables.service
 Created symlink /etc/systemd/system/multi-user.target.wants/iptables.service → /usr/lib/systemd/system/iptables.service.
 [tony@stapp01 ~]$ sudo systemctl status iptables.service
@@ -541,6 +522,8 @@ Jul 14 20:48:11 stapp01 iptables.init[46099]: iptables: Applying firewall rules:
 Jul 14 20:48:11 stapp01 systemd[1]: Finished IPv4 firewall with iptables.
 ```
 
+By installing and enabling the service, we're not _actually_ enabling anything yet. No traffic will be blocked, no services protected. We can verify this by listing rules with `iptables -L`:
+
 ```
 [tony@stapp01 ~]$ sudo iptables -L
 Chain INPUT (policy ACCEPT)
@@ -553,9 +536,10 @@ Chain OUTPUT (policy ACCEPT)
 target     prot opt source               destination
 ```
 
-testing from jmp box
+And also by testing the connectivity from an outside source, in this case the jump box host:
+
 ```console
-thor@jump-host ~$ curl -I http://stapp01:8084
+[thor@jump-host ~]$ curl -I http://stapp01:8084
 HTTP/1.1 403 Forbidden
 Date: Tue, 14 Jul 2026 20:31:08 GMT
 Server: Apache/2.4.62 (CentOS Stream)
@@ -566,9 +550,15 @@ Content-Length: 2713881
 Content-Type: text/html; charset=UTF-8
 ```
 
-first, add a rule allowing SSH - otherwise we won't be able to connect
-then we append a reject all
-then we add an allow for stlb01 to reach the port
+The rule system is fairly straightforward for `iptables` rules are processed one at a time, from top to bottom, in the chain that matches the traffic pattern that applies. Our goal is to prevent traffic to port 8084 from all sources _except_ from the load balancer. The easiest way to do that is to put a "reject all" rule at the bottom of the ruleset and then allow the ports we _do_ want enabled.
+
+This is the rough order of operations for setting up the rules:
+- First, we have to add a rule allowing SSH - otherwise we won't be able to connect to the box once the `REJECT` rule gets added
+- Next, we append a reject all rule to the bottom of the ruleset
+- Finally, we add an allow for `stlb01` to reach the port in question
+
+With that out of the way, let's add our rules and then list out our ruleset to confirm. Note that because the KodeKloud labs are spawned via Kubernetes calls, `stlb01` will translate automatically to `10-244-29-245.stlb01.3vvlmha5kdtyhwcz.svc.cluster.local`:
+
 ```console
 [tony@stapp01 ~]$ sudo iptables -I INPUT -p TCP --dport 22 -j ACCEPT
 [tony@stapp01 ~]$ sudo iptables -A INPUT -p TCP -j REJECT
@@ -587,13 +577,15 @@ Chain OUTPUT (policy ACCEPT)
 target     prot opt source               destination
 ```
 
-testing rule
+With those rules in place, let's test them before making them permanent. We'll re-run the `curl` from earlier on the jump box again:
+
 ```console
 thor@jump-host ~$ curl -I http://stapp01:8084
 curl: (7) Failed to connect to stapp01 port 8084: Connection refused
 ```
 
-and on load balancer
+And to confirm that the port is open to the load balancer, we test the same command from `stlb01`:
+
 ```console
 [loki@stlb01 ~]$ curl -I http://stapp01:8084
 HTTP/1.1 403 Forbidden
@@ -606,10 +598,13 @@ Content-Length: 2713881
 Content-Type: text/html; charset=UTF-8
 ```
 
-now, saving
+Perfect! We have the rules enabled, connectivity from `stlb01`, and all that's left is to permanently save the rules so that they can be enabled from the get-go. To do that, we use the `iptables-save` command, saving the output to `/etc/sysconfig/iptables` since we're on a CentOS host:
+
 ```console
 [tony@stapp01 ~]$ sudo sh -c '/sbin/iptables-save > /etc/sysconfig/iptables'
 ```
+
+Now all that's left is to repeat the process for both `stapp02` and `stapp03`!
 
 ## Day 14: Linux Process Troubleshooting
 
