@@ -723,10 +723,119 @@ With that, we're finished with this task - on to Day 15!
 ## Day 15: Setup SSL for Nginx
 
 > [!QUOTE]+ Problem Prompt
-> TBD
+> The system admins team of xFusionCorp Industries needs to deploy a new application on App Server 1 in Stratos Datacenter. They have some pre-requites to get ready that server for application deployment. Prepare the server as per requirements shared below:
+> 
+> 1. Install and configure nginx on App Server 1.
+> 2. On App Server 1 there is a self signed SSL certificate and key present at location /tmp/nautilus.crt and /tmp/nautilus.key. Move them to some appropriate location and deploy the same in Nginx.
+> 3. Create an index.html file with content Welcome! under Nginx document root.
+> 4. For final testing try to access the App Server 1 link (via hostname) from jump host using curl command. For example: curl -Ik https://<app-server-name>/.
 {icon="circle-question"}
 
-Placeholder.
+This task is pretty straightforward - not too much in the way of thought process or variability in how to approach it. We'll start by installing Nginx with `dnf` and then enabling and starting the service with `systemctl`:
+
+```console
+[tony@stapp01 ~]$ sudo dnf install -y nginx
+CentOS Stream 9 - BaseOS                     4.4 MB/s | 9.0 MB     00:02    
+CentOS Stream 9 - AppStream                   13 MB/s |  28 MB     00:02    
+CentOS Stream 9 - Extras packages             31 kB/s |  21 kB     00:00    
+                  [...]
+Complete!
+[tony@stapp01 ~]$ sudo systemctl enable --now nginx.service
+Created symlink /etc/systemd/system/multi-user.target.wants/nginx.service → /usr/lib/systemd/system/nginx.service.
+[tony@stapp01 ~]$ sudo systemctl status nginx.service
+● nginx.service - The nginx HTTP and reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset:>
+     Active: active (running) since Wed 2026-07-15 00:38:24 UTC; 7s ago
+    Process: 36164 ExecStartPre=/usr/bin/rm -f /run/nginx.pid (code=exited, >
+    Process: 36172 ExecStartPre=/usr/sbin/nginx -t (code=exited, status=0/SU>
+    Process: 36185 ExecStart=/usr/sbin/nginx (code=exited, status=0/SUCCESS)
+   Main PID: 36192 (nginx)
+                  [...]
+```
+
+If you're unfamiliar with how Nginx does things, all of the configuration files are housed under `/etc/nginx/`. The primary configuration file is `/etc/nginx/nginx.conf`, although occasionally you'll see setups that use drop-ins under `/etc/nginx/conf.d/*.conf`. It's nice for more complex setups, but for our use case with this lab, we'll work with the main file.
+
+Looking through `nginx.conf`, a good bit into the file we'll see the SSL server section:
+
+```nginx
+                  [...]
+# Settings for a TLS enabled server.
+#
+#    server {
+#        listen       443 ssl http2;
+#        listen       [::]:443 ssl http2;
+#        server_name  _;
+#        root         /usr/share/nginx/html;
+#
+#        ssl_certificate "/etc/pki/nginx/server.crt";
+#        ssl_certificate_key "/etc/pki/nginx/private/server.key";
+#        ssl_session_cache shared:SSL:1m;
+#        ssl_session_timeout  10m;
+#        ssl_ciphers PROFILE=SYSTEM;
+#        ssl_prefer_server_ciphers on;
+#
+#        # Load configuration files for the default server block.
+#        include /etc/nginx/default.d/*.conf;
+#
+#        error_page 404 /404.html;
+#            location = /40x.html {
+#        }
+#
+#        error_page 500 502 503 504 /50x.html;
+#            location = /50x.html {
+#        }
+#    }
+                  [...]
+```
+
+As you can see, the parts we're interested in are the ones that map to the problem prompt:
+- The SSL certificate is stored at `/etc/pki/nginx/server.crt`
+- The SSL private key is stored at `/etc/pki/nginx/private/server.key`
+- The document root is at `/usr/share/nginx/html` - this is where we'll put the `index.html` file later
+
+Now we just need to set up the files, uncomment the server block, and then restart the service.
+
+First, we'll make the index page:
+```
+[tony@stapp01 ~]$ sudo sh -c 'echo "Welcome!" > /usr/share/nginx/html/index.html'
+[tony@stapp01 ~]$ sudo ls -la /usr/share/nginx/html/index.html
+lrwxrwxrwx 1 root root 25 May 27 10:16 /usr/share/nginx/html/index.html -> ../../testpage/index.html
+[tony@stapp01 ~]$ sudo cat /usr/share/nginx/html/index.html
+Welcome!
+```
+Now, we move the certs. Note that we had to create the `/etc/pki/nginx/private` directory, since it doesn't exist by default:
+```console
+[tony@stapp01 ~]$ sudo ls -al /etc/pki/nginx/private/
+ls: cannot access '/etc/pki/nginx/private/': No such file or directory
+[tony@stapp01 ~]$ sudo mkdir -p /etc/pki/nginx/private/
+[tony@stapp01 ~]$ sudo cp /tmp/nautilus.crt /etc/pki/nginx/server.crt
+[tony@stapp01 ~]$ sudo cp /tmp/nautilus.key /etc/pki/nginx/private/server.key
+```
+
+And finally, we need to modify `/etc/nginx/nginx.conf` and uncomment all of the lines in the SSL `server` block. Once we've done that, we can restart the service and have an SSL server running!
+
+```console
+[tony@stapp01 ~]$ # We uncomment all of the SSL server block in the
+[tony@stapp01 ~]$ # nginx.conf file.
+[tony@stapp01 ~]$ sudo vi /etc/nginx/nginx.conf
+[tony@stapp01 ~]$ sudo systemctl restart nginx.service
+```
+
+Now we just need to check from the jump box to make sure that we have successfully deployed the SSL server. We can do so using the `-k` flag with `curl` to disable certificate checking, otherwise it won't accept the self-signed certs we used:
+
+```console
+thor@jump-host ~$ curl -Ik https://stapp01
+HTTP/2 200 
+server: nginx/1.20.1
+date: Wed, 15 Jul 2026 00:46:20 GMT
+content-type: text/html
+content-length: 9
+last-modified: Wed, 15 Jul 2026 00:41:09 GMT
+etag: "6a56d725-9"
+accept-ranges: bytes
+```
+
+Day 15 down!
 
 ## Day 16: Install and Configure Nginx as an LBR
 
