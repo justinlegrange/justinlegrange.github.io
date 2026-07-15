@@ -1202,28 +1202,116 @@ Query OK, 0 rows affected (0.000 sec)
 
 And as before, that's it - we've given the user all the privileges requested. On to Day 19!
 
-
 ## Day 19: Install and Configure Web Application
 
 > [!QUOTE]+ Problem Prompt
 > xFusionCorp Industries is planning to host two static websites on their infra in Stratos Datacenter. The development of these websites is still in-progress, but we want to get the servers ready. Please perform the following steps to accomplish the task:
 >  
-> A. Install httpd package and dependencies on app server 3.  
-> B. Apache should serve on port 8083.  
-> C. There are two website's backups /home/thor/news and /home/thor/cluster on jump_host. Set them up on Apache in a way that news should work on the link http://localhost:8083/news/ and cluster should work on link http://localhost:8083/cluster/ on the mentioned app server.  
-> D. Once configured you should be able to access the website using curl command on the respective app server, i.e curl http://localhost:8083/news/ and curl http://localhost:8083/cluster/  
+> A. Install httpd package and dependencies on app server 2.  
+> B. Apache should serve on port 3001.  
+> C. There are two website's backups /home/thor/ecommerce and /home/thor/cluster on jump_host. Set them up on Apache in a way that ecommerce should work on the link http://localhost:3001/ecommerce/ and cluster should work on link http://localhost:3001/cluster/ on the mentioned app server.  
+> D. Once configured you should be able to access the website using curl command on the respective app server, i.e curl http://localhost:3001/ecommerce/ and curl http://localhost:3001/cluster/
 {icon="circle-question"}
 
-ssh banner@stapp03
+Checking installed packages:
+```
+[steve@stapp02 ~]$ dnf list --installed | grep httpd
+[steve@stapp02 ~]$ dnf list --installed | grep apache
+[steve@stapp02 ~]$ sudo dnf install -y httpd
+CentOS Stream 9 - BaseOS                                                                               6.1 MB/s | 9.0 MB     00:01    
+CentOS Stream 9 - AppStream                                                                             14 MB/s |  28 MB     00:02    
+CentOS Stream 9 - Extras packages                                                                       26 kB/s |  21 kB     00:00    
+Extra Packages for Enterprise Linux 9 - x86_64                                                          54 MB/s |  21 MB     00:00    
+Extra Packages for Enterprise Linux 9 openh264 (From Cisco) - x86_64                                   4.5 kB/s | 2.5 kB     00:00    
+Extra Packages for Enterprise Linux 9 - Next - x86_64                                                  1.1 MB/s | 265 kB     00:00    
+Dependencies resolved.
+=======================================================================================================================================
+ Package                               Architecture              Version                            Repository                    Size
+=======================================================================================================================================
+Installing:
+ httpd                                 x86_64                    2.4.62-14.el9                      appstream                     47 k
+Installing dependencies:
+ apr                                   x86_64                    1.7.0-12.el9                       appstream                    123 k
+ apr-util                              x86_64                    1.6.1-23.el9                       appstream                     95 k
+ apr-util-bdb                          x86_64                    1.6.1-23.el9                       appstream                     13 k
+ centos-logos-httpd                    noarch                    90.9-1.el9                         appstream                    1.5 M
+ httpd-core                            x86_64                    2.4.62-14.el9                      appstream                    1.5 M
 
-sudo sed -i "s/Listen 80/Listen 8083/g" /etc/httpd/conf/httpd.conf
-sudo systemctl restart httpd
+ [...]
 
-scp -r news banner@stapp03:/home/banner/news
-scp -r cluster banner@stapp03:/home/banner/cluster
+ Installed:
+  apr-1.7.0-12.el9.x86_64                      apr-util-1.6.1-23.el9.x86_64                  apr-util-bdb-1.6.1-23.el9.x86_64        
+  apr-util-openssl-1.6.1-23.el9.x86_64         centos-logos-httpd-90.9-1.el9.noarch          httpd-2.4.62-14.el9.x86_64              
+  httpd-core-2.4.62-14.el9.x86_64              httpd-filesystem-2.4.62-14.el9.noarch         httpd-tools-2.4.62-14.el9.x86_64        
+  mailcap-2.1.49-5.el9.noarch                  mod_http2-2.0.26-6.el9.x86_64                 mod_lua-2.4.62-14.el9.x86_64            
 
-sudo cp -r news /var/www/html/news
-sudo cp -r cluster /var/www/html/cluster
+Complete!
+```
+
+Now that `httpd` is installed, we need to enable the service to start up the web server. We've done this plenty of times in this problem set, so this shouldn't look too unfamiliar if you've read this far.
+
+```
+[steve@stapp02 ~]$ sudo systemctl status httpd.service
+○ httpd.service - The Apache HTTP Server
+     Loaded: loaded (/usr/lib/systemd/system/httpd.service; disabled; preset: disabled)
+     Active: inactive (dead)
+       Docs: man:httpd.service(8)
+[steve@stapp02 ~]$ sudo systemctl enable --now httpd.service
+Created symlink /etc/systemd/system/multi-user.target.wants/httpd.service → /usr/lib/systemd/system/httpd.service.
+```
+
+Next up - we need to change the listening port from port 80 to port 3001. You can do this in any text or stream editor - `sed` is easy enough - and then restart the service once you've saved the configuration file. As always, if you're using `sed` or another in-place editor, make sure to test out your changes with a dry run _before_ you find out the hard way that it didn't edit what you thought it did.
+
+```
+[steve@stapp02 ~]$ sudo sed -i "s/Listen 80/Listen 3001/g" /etc/httpd/conf/httpd.conf
+[steve@stapp02 ~]$ sudo systemctl restart httpd
+```
+
+Now we need to set up the different sites - either log out of our SSH session as `steve`, or pop open a new terminal in the KK Engineer task pane. Once you're in `thor`'s terminal, `scp` the files over to `stapp02` so we can use them:
+
+```
+thor@jump-host ~$ ls -l
+total 8
+drwxr-xr-x 2 thor thor 4096 Jul 15 22:41 cluster
+drwxr-xr-x 2 thor thor 4096 Jul 15 22:41 ecommerce
+thor@jump-host ~$ scp -r ecommerce steve@stapp02:/home/steve/ecommerce
+steve@stapp02's password: 
+index.html                                                                                           100%  122   238.0KB/s   00:00    
+thor@jump-host ~$ scp -r cluster steve@stapp02:/home/steve/cluster
+steve@stapp02's password: 
+index.html                                                                                           100%  120   191.9KB/s   00:00    
+```
+
+The files have been transferred, so hop back into `steve`'s terminal. We copy the files from the home directory to the DocumentRoot at `/var/www/html` (note the `-r` flag; it's what's creating the `ecommerce` and `cluster` directories in the destination folder):
+
+```
+[steve@stapp02 ~]$ sudo cp -r ecommerce/ /var/www/html/
+[steve@stapp02 ~]$ sudo cp -r cluster /var/www/html/
+```
+
+Now all that's left is to test each of the paths with `curl`. We've done this quite a bit so far, so this should be all-too-familiar territory.
+
+```
+[steve@stapp02 ~]$ curl -I localhost:3001/ecommerce/
+HTTP/1.1 200 OK
+Date: Wed, 15 Jul 2026 22:51:45 GMT
+Server: Apache/2.4.62 (CentOS Stream)
+Last-Modified: Wed, 15 Jul 2026 22:50:41 GMT
+ETag: "7a-656ae272ad1e2"
+Accept-Ranges: bytes
+Content-Length: 122
+Content-Type: text/html; charset=UTF-8
+
+[steve@stapp02 ~]$ curl -I localhost:3001/cluster/
+HTTP/1.1 200 OK
+Date: Wed, 15 Jul 2026 22:51:47 GMT
+Server: Apache/2.4.62 (CentOS Stream)
+Last-Modified: Wed, 15 Jul 2026 22:50:51 GMT
+ETag: "78-656ae27c45e0c"
+Accept-Ranges: bytes
+Content-Length: 120
+Content-Type: text/html; charset=UTF-8
+```
 
 ## Day 20: Configure Nginx + PHP-FPM Using Unix Sock
 
