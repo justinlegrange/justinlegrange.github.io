@@ -5,6 +5,7 @@ lastMod: 2026-07-16
 summary: "A walkthrough for days 1 through 10 of KodeKloud's 100 Days of MLOps challenges."
 # draft: true
 series: ["KodeKloud's 100 Days of MLOps"]
+series_order: 1
 categories: ["DevOps", "MLOps", "KodeKloud"]
 tags: ["devops", "mlops", "kodekloud", "llms", "python"]
 ---
