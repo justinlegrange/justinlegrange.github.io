@@ -1317,71 +1317,156 @@ Content-Type: text/html; charset=UTF-8
 
 > [!QUOTE]+ Problem Prompt
 > The Nautilus application development team is planning to launch a new PHP-based application, which they want to deploy on Nautilus infra in Stratos DC. The development team had a meeting with the production support team and they have shared some requirements regarding the infrastructure. Below are the requirements they shared:  
-> 
-> A. Install nginx on app server 2 , configure it to use port 8093 and its document root should be /var/www/html.  
-> B. Install php-fpm version 8.3 on app server 2, it must use the unix socket /var/run/php-fpm/default.sock (create the parent directories if don't exist).  
+>  
+> A. Install nginx on app server 3 , configure it to use port 8096 and its document root should be /var/www/html.  
+> B. Install php-fpm version 8.2 on app server 3, it must use the unix socket /var/run/php-fpm/default.sock (create the parent directories if don't exist).  
 > C. Configure php-fpm and nginx to work together.  
-> D. Once configured correctly, you can test the website using curl http://stapp02:8093/index.php command from jump host.  
->   
+> D. Once configured correctly, you can test the website using curl http://stapp03:8096/index.php command from jump host.  
+>  
 > NOTE: We have copied two files, index.php and info.php, under /var/www/html as part of the PHP-based application setup. Please do not modify these files.
 {icon="circle-question"}
 
+This one will be a fair bit more involved than the previous entries in the series. First, we log in to `stapp03` and check what's installed; when `nginx` returns that it's not installed, we grab it and its dependencies with `dnf`:
 
-ssh steve@stapp02
+```console
+[banner@stapp03 ~]$ dnf list --installed | grep nginx
+[banner@stapp03 ~]$ sudo dnf install -y nginx
+[...]
+Dependencies resolved.
+=======================================================================================================================================
+ Package                               Architecture              Version                            Repository                    Size
+=======================================================================================================================================
+Installing:
+ nginx                                 x86_64                    2:1.20.1-30.el9                    appstream                     37 k
 
-Install deps:
-sudo dnf install nginx
+[...]
 
-https://www.php.net/downloads.php?usage=web&os=linux&osvariant=linux-redhat&version=8.3
-```bash
-$ sudo dnf install -y dnf-plugins-core
-$ sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm
-$ sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-$(rpm -E %rhel).rpm
-$ sudo dnf module reset php -y
-$ sudo dnf module enable php:remi-8.3 -y
-$ sudo dnf install -y php
+Installed:
+  centos-logos-httpd-90.9-1.el9.noarch          logrotate-3.18.0-12.el9.x86_64                   nginx-2:1.20.1-30.el9.x86_64         
+  nginx-core-2:1.20.1-30.el9.x86_64             nginx-filesystem-2:1.20.1-30.el9.noarch         
+
+Complete!
 ```
 
-Official English Documentation: http://nginx.org/en/docs/
+As with the times before, we immediately enable the service after install.
 
-sudo vi /etc/nginx/nginx.conf
-```
-    server {
-        listen       8095;
-        listen       [::]:8095;
-        server_name  _;
-        root         /var/www/html;
-        [...]
+```console
+[banner@stapp03 ~]$ sudo systemctl status nginx.service
+○ nginx.service - The nginx HTTP and reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; disabled; preset: disabled)
+     Active: inactive (dead)
+[banner@stapp03 ~]$ sudo systemctl enable --now nginx.service
+Created symlink /etc/systemd/system/multi-user.target.wants/nginx.service → /usr/lib/systemd/system/nginx.service.
 ```
 
-sudo mkdir -p /var/run/php-fpm/
-sudo vi /etc/php-fpm.d/www.conf
+This should look familiar - we're going to edit `/etc/nginx/nginx.conf` and make sure that it's listening on the correct port and that it has the correct document root.
+
+```nginx
+  server {
+    listen       8096;
+    listen       [::]:8096;
+    server_name  _;
+    root         /var/www/html;
+    [...]
+  }
 ```
+
+Now we need to get PHP and PHP-FPM installed. This part isn't too bad - I followed [the instructions from the PHP website](https://www.php.net/downloads.php?usage=web&os=linux&osvariant=linux-redhat&version=8.2) almost identically. The only bit that I skipped was the `subscription-manager` piece - since we don't have a username and password, we wouldn't be able to register any subscriptions. Either way, it works without that command flawlessly:
+
+```console
+[banner@stapp03 ~]$ sudo dnf install -y dnf-plugins-core
+[banner@stapp03 ~]$ sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm
+[banner@stapp03 ~]$ sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-$(rpm -E %rhel).rpm
+[banner@stapp03 ~]$ sudo dnf module reset php -y
+[banner@stapp03 ~]$ sudo dnf module enable php:remi-8.2 -y
+[banner@stapp03 ~]$ sudo dnf install -y php
+```
+
+Now we need to get all of the pieces of the site talking to each other. To do that, we pass the PHP-FPM socket we're setting up in `/etc/php-fpm.d/www.conf` into a drop-in configuration file for Nginx at `/etc/nginx/conf.d/php-fpm.conf`.
+
+Notice that as I'm making the changes with `sed`, I've changed the delimiter from `/` to `#` - I only do that to make it easier and cleaner to get the correct edits.
+
+```console
+[banner@stapp03 ~]$ sudo mkdir -p /var/run/php-fpm/
+[banner@stapp03 ~]$ sudo sed -i "s#listen = /run/php-fpm/www.sock#listen = /var/run/php-fpm/default.sock#g" /etc/php-fpm.d/www.conf
+[banner@stapp03 ~]$ sudo sed -i "s#/run/php-fpm/www.sock#/var/run/php-fpm/default.sock#g" /etc/nginx/conf.d/php-fpm.conf
+```
+
+Here's what the PHP-FPM config file looks like after our changes:
+
+```console
+[steve@stapp02 ~]$ grep -E -B2 "listen = .*" /etc/php-fpm.d/www.conf
+;   '/path/to/unix/socket' - to listen on a unix socket.
+; Note: This value is mandatory.
 listen = /var/run/php-fpm/default.sock
 ```
 
-sudo vi /etc/nginx/conf.d/php-fpm.conf 
-```
+And likewise, the Nginx configuration drop-in file for PHP-FPM:
+
+```nginx
+# PHP-FPM FastCGI server
+# network or unix domain socket configuration
+
 upstream php-fpm {
         server unix:/var/run/php-fpm/default.sock;
 }
 ```
 
-sudo vi /etc/nginx/conf.d/www.conf
+Now we need to test our configuration. We can quickly do this with `nginx -t`; once it passes the checks, we restart both the `nginx` and `php-fpm` services to make sure they pick up the changes.
+
 ```
-server {
-    location ~ \.php$ {
-        root /var/www/html;
-        fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        fastcgi_pass unix:/var/run/php-fpm/www.sock;
-        fastcgi_index index.php;
-        include fastcgi.conf;
-    }
-}
+[banner@stapp03 ~]$ sudo nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+[banner@stapp03 ~]$ sudo systemctl restart nginx.service
+[banner@stapp03 ~]$ sudo systemctl restart php-fpm.service
+[banner@stapp03 ~]$ sudo systemctl status nginx.service
+● nginx.service - The nginx HTTP and reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: disabled)
+    Drop-In: /etc/systemd/system/nginx.service.d
+             └─php-fpm.conf
+     Active: active (running) since Wed 2026-07-15 23:31:19 UTC; 22s ago
+    Process: 45242 ExecStartPre=/usr/bin/rm -f /run/nginx.pid (code=exited, status=0/SUCCESS)
+    Process: 45243 ExecStartPre=/usr/sbin/nginx -t (code=exited, status=0/SUCCESS)
+    Process: 45250 ExecStart=/usr/sbin/nginx (code=exited, status=0/SUCCESS)
+   Main PID: 45257 (nginx)
+      Tasks: 17 (limit: 404712)
+     Memory: 16.1M
+        CPU: 48ms
+     CGroup: /system.slice/nginx.service
+
+[...]
+
+[banner@stapp03 ~]$ sudo systemctl status php-fpm.service
+● php-fpm.service - The PHP FastCGI Process Manager
+     Loaded: loaded (/usr/lib/systemd/system/php-fpm.service; disabled; preset: disabled)
+     Active: active (running) since Wed 2026-07-15 23:31:22 UTC; 45s ago
+   Main PID: 45489 (php-fpm)
+     Status: "Processes active: 0, idle: 5, Requests: 0, slow: 0, Traffic: 0.00req/sec"
+      Tasks: 6 (limit: 404712)
+     Memory: 10.4M
+        CPU: 46ms
+     CGroup: /system.slice/php-fpm.service
+
+[...]
+
+Jul 15 23:31:22 stapp03 systemd[1]: Starting The PHP FastCGI Process Manager...
+Jul 15 23:31:22 stapp03 systemd[1]: Started The PHP FastCGI Process Manager.
 ```
 
-sudo nginx -t
-sudo systemctl restart nginx
-sudo systemctl restart php-fpm
+Finally, the last step - we need to check if we can properly reach the page. In a terminal on the jump box, run a `curl` against the page and see if it's live:
 
-curl http://stapp02:8093/index.php
+```console
+[thor@jump-host ~]$ curl -I http://stapp03:8096/index.php
+HTTP/1.1 200 OK
+Server: nginx/1.20.1
+Date: Wed, 15 Jul 2026 23:32:45 GMT
+Content-Type: text/html; charset=UTF-8
+Connection: keep-alive
+X-Powered-By: PHP/8.2.32
+
+[thor@jump-host ~]$ curl http://stapp03:8096/index.php
+Welcome to xFusionCorp Industries!
+```
+
+And with that - we're done with days 11 through 20 out of 100! I hope you enjoyed the writeups, and we'll pick back up with Days 21 through 30 soon!
