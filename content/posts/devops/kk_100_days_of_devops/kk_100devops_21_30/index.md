@@ -137,33 +137,53 @@ Once you click the "Fork Repository" button, it'll create a clone of the reposit
 ## Day 24: Git Create Branches
 
 > [!QUOTE]+ Problem Prompt
-> Nautilus developers are actively working on one of the project repositories, /usr/src/kodekloudrepos/cluster. Recently, they decided to implement some new features in the application, and they want to maintain those new changes in a separate branch. Below are the requirements that have been shared with the DevOps team:
->  
-> On Storage server in Stratos DC create a new branch xfusioncorp_cluster from master branch in /usr/src/kodekloudrepos/cluster git repo.  
+> Nautilus developers are actively working on one of the project repositories, /usr/src/kodekloudrepos/ecommerce. Recently, they decided to implement some new features in the application, and they want to maintain those new changes in a separate branch. Below are the requirements that have been shared with the DevOps team:
+> 
+> On Storage server in Stratos DC create a new branch xfusioncorp_ecommerce from master branch in /usr/src/kodekloudrepos/ecommerce git repo.  
 > Please do not try to make any changes in the code.
 {icon="circle-question"}
 
-checked the man page, saw this:
-```
+This one is a pretty foundational skill - being able to create feature branches is part-and-parcel to keeping development clean between a team that's all flying to get features pushed out as soon as possible. It helps you keep you developing on your piece of the functionality while minimizing conflicts, allowing others to modify the same file you're working on without either of you overwriting each other's code.
+
+As with lots of Linux commands, the first stop will be the `man` page. It's a little lengthy, but here it is if you're curious:
+
+```man
 git checkout [<branch>]
-           To prepare for working on <branch>, switch to it by updating the index and the files in the working
-           tree, and by pointing HEAD at the branch. Local modifications to the files in the working tree are
-           kept, so that they can be committed to the <branch>.
+    To prepare for working on <branch>, switch to it by updating the index and the files in the working
+    tree, and by pointing HEAD at the branch. Local modifications to the files in the working tree are
+    kept, so that they can be committed to the <branch>.
 
-           If <branch> is not found but there does exist a tracking branch in exactly one remote (call it
-           <remote>) with a matching name and --no-guess is not specified, treat as equivalent to
+    If <branch> is not found but there does exist a tracking branch in exactly one remote (call it
+    <remote>) with a matching name and --no-guess is not specified, treat as equivalent to
 
-               $ git checkout -b <branch> --track <remote>/<branch>
+        $ git checkout -b <branch> --track <remote>/<branch>
 
-           You could omit <branch>, in which case the command degenerates to "check out the current branch",
-           which is a glorified no-op with rather expensive side-effects to show only the tracking
-           information, if it exists, for the current branch.
+    You could omit <branch>, in which case the command degenerates to "check out the current branch",
+    which is a glorified no-op with rather expensive side-effects to show only the tracking
+    information, if it exists, for the current branch.
 ```
 
+Let's set up some branching! First, we change into the `ecommerce` local repo, checking the current status:
+
+```console
+[natasha@ststor01 ~]$ cd /usr/src/kodekloudrepos/ecommerce/
+[natasha@ststor01 ecommerce]$ sudo git branch
+* kodekloud_ecommerce
+  master
 ```
-[natasha@ststor01 ~]$ cd /usr/src/kodekloudrepos/cluster/
-[natasha@ststor01 blog]$ sudo git checkout -b xfusioncorp_blog master
+
+Now we need to add our branch, basing it on the `master` branch and verifying the switch:
+
+```console
+[natasha@ststor01 ecommerce]$ sudo git checkout -b xfusioncorp_ecommerce master
+Switched to a new branch 'xfusioncorp_ecommerce'
+[natasha@ststor01 ecommerce]$ sudo git branch
+  kodekloud_ecommerce
+  master
+* xfusioncorp_ecommerce
 ```
+
+That's it!
 
 ## Day 25: Git Merge Branches
 
