@@ -16,20 +16,23 @@ sharingLinks: false
 {{< timeline >}}
 
     {{< timelineItem icon="code" header="Senior Penetration Tester" subheader="2021 - Present" >}}
-        <img src="./images/veracode_logo.svg">
+        <img src="./images/veracode-logo.svg">
         Still working on writing this one!
     {{< /timelineItem >}}
 
     {{< timelineItem icon="code" header="Penetration Tester @ American Airlines" subheader="Jun 2018 - Feb 2021" >}}
+        <img src="./images/aa-logo.png" width="35%">
         Assisted penetration testing efforts through web application testing and network pentesting. Helped automate segmentation scanning processes via Python scripting. Lead red team efforts to create an internal adversary emulation program.
     {{< /timelineItem >}}
 
     {{< timelineItem icon="code" header="ADEPT Assoc. Infra. Engineer @ American Airlines" subheader="Jul 2017 - Jun 2018" >}}
+        <img src="./images/aa-logo.png" width="35%">
         Handled access management for Hyperion systems. Installed and configured Nagios monitoring system and wrote processes surrounding operation and upgrades.
     {{< /timelineItem >}}
 
     {{< timelineItem icon="code" header="IT Student Worker @ Oklahoma State Univ. Athletics" subheader="Sep 2016 - Jul 2017" >}}
-        Scripted entire installation process, lowering turnaround time for imaging from ~2 hrs. to < 30 mins. Handled custom requests from coaching staff for  equipment needs. Installed programs for staff on an as-needed basis. 
+        <img src="./images/osu-logo.svg">
+        Scripted entire installation process, lowering turnaround time for computer imaging from ~2 hrs. to < 30 mins. Handled custom requests from coaching staff for  equipment needs. Installed programs for staff on an as-needed basis. 
     {{< /timelineItem >}}
 
 {{< /timeline >}}
@@ -47,6 +50,7 @@ sharingLinks: false
     {{< /timelineItem >}}
 
     {{< timelineItem icon="graduation-cap" header="Undergraduate Degree - Oklahoma State University" subheader="2011 - 2016" >}}
+        <img src="./images/osu-logo.svg">
         BSE, Management of Information Systems with the Information Assurance option
     {{< /timelineItem >}}
 
