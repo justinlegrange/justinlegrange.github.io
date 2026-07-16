@@ -1,9 +1,9 @@
 ---
 title: "KodeKloud's 100 Days of DevOps: Day 21 - 30"
 date: 2026-01-03 # YYYY-MM-DD
-lastMod: 2026-06-24
+lastMod: 2026-07-16
 summary: "A walkthrough for days 21 through 30 of KodeKloud's 100 Days of DevOps challenges."
-draft: true
+# draft: true
 series: ["KodeKloud's 100 Days of DevOps"]
 series_order: 3
 categories: ["DevOps", "KodeKloud"]
@@ -12,32 +12,75 @@ tags: ["devops", "linux", "git"]
 
 ## Intro
 
-[KK Eng](https://engineer.kodekloud.com/practice)
+Welcome back all to another post in the 100 Days of DevOps series! This post is going to be much lighter on content than the previous two for the most part - a lot of the `git` tasks ahead are straightforward ones and don't require as much explanation or troubleshooting as some of the server setup we've been doing. Even so, it's still great knowledge - if you enjoy this post, make sure to check out the first two from the series button at the top and bottom of this page.
+
+It's also worth noting that this post is currently a work-in-progress - you may see some quick notes from me completing the challenges. As I work through writing them up, they'll turn into a much nicer writeup - promise!
+
+With that, let's start knocking down some `git` tasks!
+
+> [!IMPORTANT]+ Spoiler alert!
+> In case you're squeamish about this sort of thing, there are a bunch of spoilers ahead - proceed at your own (self-learning) risk. I'll be diving into the nitty-gritty behind solutions where I can, so hopefully you'll be able to learn a thing or two.  
+> 
+> It's also worth noting that if you're working alongside me, you'll see different users, IP addresses, passwords, or even completely different solutions occasionally - they rotate these with each challenge spawn on most challenges.
+{icon="circle-info"}
 
 ## Day 21: Set Up Git Repository on Storage Server
 
-> [!QUOTE] Problem Prompt
+> [!QUOTE]+ Problem Prompt
 > The Nautilus development team has provided requirements to the DevOps team for a new application development project, specifically requesting the establishment of a Git repository. Follow the instructions below to create the Git repository on the Storage server in the Stratos DC:  
 >  
 > 1. Utilize yum to install the git package on the Storage Server.  
 > 2. Create a bare repository named /opt/games.git (ensure exact name usage).  
 {icon="circle-question"}
 
-This one's pretty straightforward - all we have to do is initialize a bare git repo. First, SSH to the server and install git:
-```
-thor@jumphost ~$ ssh natasha@ststor01
+This one's pretty straightforward - all we have to do is initialize a bare git repo. First, SSH to the server and check if `git` is installed; if not, use `dnf` or `yum` to install it:
+
+```console
+[natasha@ststor01 ~]$ dnf list --installed | grep git
+crontabs.noarch                                1.11-26.20190603git.el9          @baseos          
+crypto-policies.noarch                         20251126-1.gite9c4db2.el9        @System          
+crypto-policies-scripts.noarch                 20251126-1.gite9c4db2.el9        @System          
+exempi.x86_64                                  2.6.0-0.2.20211007gite23c213.el9 @appstream
 [natasha@ststor01 ~]$ sudo dnf install -y git
+[...]
+Dependencies resolved.
+=================================================================================================================
+ Package                        Architecture         Version                       Repository               Size
+=================================================================================================================
+Installing:
+ git                            x86_64               2.52.0-1.el9                  appstream                39 k
+[...]
+Installed:
+  git-2.52.0-1.el9.x86_64                git-core-2.52.0-1.el9.x86_64         git-core-doc-2.52.0-1.el9.noarch   
+  less-590-6.el9.x86_64                  perl-Error-1:0.17029-7.el9.noarch    perl-Git-2.52.0-1.el9.noarch       
+  perl-TermReadKey-2.38-11.el9.x86_64    perl-lib-0.65-483.el9.x86_64        
+
+Complete!
 ```
 
-Then, navigate to the directory and initialize the repo!
-```
+Then, we navigate to the directory and initialize a bare git repo!
+```console
 [natasha@ststor01 ~]$ cd /opt
 [natasha@ststor01 ~]$ sudo git init --bare games.git
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: will change to "main" in Git 3.0. To configure the initial branch name
+hint: to use in all of your new repositories, which will suppress this warning,
+hint: call:
+hint:
+hint:   git config --global init.defaultBranch <name>
+hint:
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint:
+hint:   git branch -m <name>
+hint:
+hint: Disable this message with "git config set advice.defaultBranchName false"
+Initialized empty Git repository in /opt/games.git/
 ```
 
 ## Day 22: Clone Git Repository on Storage Server
 
-> [!QUOTE] Problem Prompt
+> [!QUOTE]+ Problem Prompt
 > The DevOps team established a new Git repository last week, which remains unused at present. However, the Nautilus application development team now requires a copy of this repository on the Storage Server in the Stratos DC. Follow the provided details to clone the repository:
 > 
 > 1. The repository to be cloned is located at /opt/cluster.git  
@@ -46,14 +89,28 @@ Then, navigate to the directory and initialize the repo!
 
 This is another straightforward one - SSH into the storage server as `natasha`, and just clone the repository like shown:
 
-```
+```console
 [natasha@ststor01 ~]$ cd /usr/src/kodekloudrepos/
 [natasha@ststor01 kodekloudrepos]$ git clone /opt/news.git
+Cloning into 'news'...
+warning: You appear to have cloned an empty repository.
+done.
 ```
+
+And verifying the repo was cloned:
+```console
+[natasha@ststor01 kodekloudrepos]$ ls -la
+total 16
+drwxr-xr-x 3 natasha natasha 4096 Jul 16 13:50 .
+drwxr-xr-x 1 root    root    4096 Jul 16 13:46 ..
+drwxr-xr-x 3 natasha natasha 4096 Jul 16 13:50 news
+```
+
+Two easy ones down - on to Day 23!
 
 ## Day 23: Fork a Git Repository
 
-> [!QUOTE] Problem Prompt
+> [!QUOTE]+ Problem Prompt
 > There is a Git server utilized by the Nautilus project teams. Recently, a new developer named Jon joined the team and needs to begin working on a project. To begin, he must fork an existing Git repository. Follow the steps below:
 >  
 > 1. Click on the Gitea UI button located on the top bar to access the Gitea page.
@@ -63,19 +120,23 @@ This is another straightforward one - SSH into the storage server as `natasha`, 
 > Note: For tasks requiring web UI changes, screenshots are necessary for review purposes. Additionally, consider utilizing screen recording software such as loom.com to record and share your task completion process.
 {icon="circle-question"}
 
-This one should be very easy - all of the work will be done via the Gitea UI, no CLI necessary. First, sign in as `jon` on the site:
+This one should be very easy - all of the work will be done via the Gitea UI, no CLI necessary. 
 
-image
+First, sign in as `jon` on the site - once you're at `jon`'s dashboard, click "Explore" in the top menu. It should pull up a listing of all of the public repositories on the Gitea instance; in that list, you should see one labeled `sarah/story-blog`.
 
-Next, we'll go to create a fork of the `sarah/story-blog` repo by clicking the hyperlink to it - it should be on the right side of the page - and once it loads, clicking the "Fork" button in the UI. It should bring up a modal to create the fork, default information should be fine for our purposes.
+Next, we'll go to create a fork of the `sarah/story-blog` repo by clicking the hyperlink to it and once it loads, clicking the "Fork" button in the top-right of the UI:
 
-image
+![Button that's used in Gitea to fork a repository.](./images/forking.png)
 
-Once you click the "
+It should bring up a modal to create a new fork - all of the default information should be fine for our purposes. The grader shouldn't look for anything specific, only the presence of the forked repository.
+
+![Modal for forking Sarah's repository in the Gitea UI.](./images/fork_options.png)
+
+Once you click the "Fork Repository" button, it'll create a clone of the repository in its current state under `jon`'s account. To verify it worked, navigate back to the main dashboard by clicking the green Gitea logo in the upper-left corner of the site. Instead of a blank page, you should now see a listing of the repositories under `jon`'s account on the right - including one named `jon/story-blog`.
 
 ## Day 24: Git Create Branches
 
-> [!QUOTE] Problem Prompt
+> [!QUOTE]+ Problem Prompt
 > Nautilus developers are actively working on one of the project repositories, /usr/src/kodekloudrepos/cluster. Recently, they decided to implement some new features in the application, and they want to maintain those new changes in a separate branch. Below are the requirements that have been shared with the DevOps team:
 >  
 > On Storage server in Stratos DC create a new branch xfusioncorp_cluster from master branch in /usr/src/kodekloudrepos/cluster git repo.  
@@ -255,9 +316,9 @@ Date:   Wed Jan 7 01:37:32 2026 +0000
     initial commit
 ```
 
-Where I screwed up: `git revert` is not the same as `git reset`. `git revert` adds a new commit that counteracts the changes you messed up on, whereas `git reset` completely moves the commit history back and nukes the new changes entirely. The most likely scenario is that the grader is running its own `sudo git log` and comparing line-by-line with something like `diff`, so I was getting it wrong for not having the screwed-up commit still in the log.
+Where I screwed up: `git revert` is not the same as `git reset`. `git revert` adds a new commit that counteracts the changes you messed up on, whereas `git reset` completely moves the commit history back and nukes the new changes entirely. The most likely scenario is that the grader is running its own `git log` and comparing line-by-line with something like `diff`, so I was getting it wrong for not having the "incorrect" commit entry still in the log.
 
-So it looks like that difference between reverting and resetting matters after all. That's something I haven't encountered before really, as all of my projects are linear in nature and only involve my own code - so resetting, reverting, and other more complex operations aren't things I normally need to touch on. This is why practical, hands-on exercises matter - I wouldn't have necessarily hit this distinction on my own experimenting!
+So it looks like that difference between reverting and resetting matters after all. That's something I haven't encountered before really, as all of my projects tend to be linear in nature and only involve my own code - so resetting, reverting, and other more complex operations aren't things I usually need to work with. This is why practical, hands-on exercises matter - I wouldn't have necessarily hit this distinction on my own experimenting!
 
 ## Day 28: Git Cherry Pick
 
