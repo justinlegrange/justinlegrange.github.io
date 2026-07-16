@@ -187,23 +187,36 @@ That's it!
 
 ## Day 25: Git Merge Branches
 
-> [!QUOTE] Problem Prompt
-> The Nautilus application development team has been working on a project repository /opt/blog.git. This repo is cloned at /usr/src/kodekloudrepos on storage server in Stratos DC. They recently shared the following requirements with DevOps team:
->  
-> Create a new branch datacenter in /usr/src/kodekloudrepos/blog repo from master and copy the /tmp/index.html file (present on storage server itself) into the repo. Further, add/commit this file in the new branch and merge back that branch into master branch. Finally, push the changes to the origin for both of the branches.
+> [!QUOTE]+ Problem Prompt
+> The Nautilus application development team has been working on a project repository /opt/official.git. This repo is cloned at /usr/src/kodekloudrepos on storage server in Stratos DC. They recently shared the following requirements with DevOps team:
+> 
+> Create a new branch devops in /usr/src/kodekloudrepos/official repo from master and copy the /tmp/index.html file (present on storage server itself) into the repo. Further, add/commit this file in the new branch and merge back that branch into master branch. Finally, push the changes to the origin for both of the branches.
 {icon="circle-question"}
 
-```
-thor@jumphost ~$ ssh natasha
-[natasha@ststor01 blog]$ cd /usr/src/kodekloudrepos/blog
-[natasha@ststor01 blog]$ sudo git checkout -b datacenter master
-[natasha@ststor01 blog]$ sudo cp /tmp/index.html .
-[natasha@ststor01 blog]$ sudo git add .
-[natasha@ststor01 blog]$ sudo git commit -m "Adding index.html"
+This is the next evolution of Day 24 - now that we can _create_ branches, we need to know how to perform work on them, and eventually merge them back into the main branch when we're finished.
+
+We start by moving into our repo and creating a new branch `devops`.
+
+```console
+[natasha@ststor01 ~]$ cd /usr/src/kodekloudrepos/official/
+[natasha@ststor01 official]$ sudo git checkout -b devops master
+Switched to a new branch 'devops'
 ```
 
-from the man page:
+Now that we've got a shiny new branch, we simulate having done some development work by copying in the new `index.html` file. In order to eventually perform the push and merge our work, we have to track the file with a `git add` to stage it, and then a `git commit`:
+
+```console
+[natasha@ststor01 official]$ sudo cp /tmp/index.html .
+[natasha@ststor01 official]$ sudo git add .
+[natasha@ststor01 official]$ sudo git commit -m "Adding index.html"
+[devops eb98f18] Adding index.html
+ 1 file changed, 1 insertion(+)
+ create mode 100644 index.html
 ```
+
+Now we're set up to do the merge. The `man` page for `git merge` has a great diagram (and explanation) of what we're trying to accomplish. Since we're the only person working on this pseudo-repo, we're not going to encounter any merge conflicts - it should end up cleanly merged after all is said and done.
+
+```man
 Incorporates changes from the named commits (since the time their histories diverged from the current
        branch) into the current branch. This command is used by git pull to incorporate changes from another
        repository and can be used by hand to merge changes from one branch into another.
@@ -228,10 +241,32 @@ Incorporates changes from the named commits (since the time their histories dive
        --continue.
 ```
 
+With the explanation piece out of the way, let's actually try out merging the branches. We switch to the branch we're merging _into_, in this case `master`, and then merge our feature branch:
+
+```console
+[natasha@ststor01 official]$ sudo git checkout master
+Switched to branch 'master'
+Your branch is up to date with 'origin/master'.
+[natasha@ststor01 official]$ sudo git merge devops
+Updating d784e64..eb98f18
+Fast-forward
+ index.html | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 index.html
 ```
-[natasha@ststor01 blog]$ sudo git checkout master
-[natasha@ststor01 blog]$ sudo git merge datacenter
-[natasha@ststor01 blog]$ sudo git push
+
+As expected, no merge conflicts were encountered. Now all we have left to do is push the changes to update the upstream on what just happened:
+
+```console
+[natasha@ststor01 official]$ sudo git push
+Enumerating objects: 4, done.
+Counting objects: 100% (4/4), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 334 bytes | 334.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+To /opt/official.git
+   d784e64..eb98f18  master -> master
 ```
 
 ## Day 26: Git Manage Remotes
