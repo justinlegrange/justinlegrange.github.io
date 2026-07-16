@@ -1,9 +1,9 @@
 ---
 title: "KodeKloud's 100 Days of MLOps: Days 1 - 10"
 date: 2026-05-11 # YYYY-MM-DD
-lastMod: 2026-06-24
+lastMod: 2026-07-16
 summary: "A walkthrough for days 1 through 10 of KodeKloud's 100 Days of MLOps challenges."
-draft: true
+# draft: true
 series: ["KodeKloud's 100 Days of MLOps"]
 categories: ["DevOps", "MLOps", "KodeKloud"]
 tags: ["devops", "mlops", "kodekloud", "llms", "python"]
@@ -11,7 +11,13 @@ tags: ["devops", "mlops", "kodekloud", "llms", "python"]
 
 ## Intro
 
-Welcome to a new series of blog posts centered around the [KodeKloud "100 Days of MLOps" challenge](https://kodekloud.com/100-days-of-mlops)!
+Welcome to a new series of blog posts centered around the [KodeKloud "100 Days of MLOps" challenge](https://kodekloud.com/100-days-of-mlops)! If you've explored the blog before, the `100 Days of X` challenges that KodeKloud puts out are a great set of exercises, in this case centered around MLOps! I've been really enjoying the 100 Days of DevOps series of challenges, and so I imagine that I'll love digging in to the MLOps side of the house as well. Hopefully you enjoy it as much as I do!
+
+> [!IMPORTANT]+ Spoiler alert!
+> In case you're squeamish about this sort of thing, there are a bunch of spoilers ahead - proceed at your own (self-learning) risk. I'll be diving into the nitty-gritty behind solutions where I can, so hopefully you'll be able to learn a thing or two.  
+> 
+> It's also worth noting that if you're working alongside me, you'll see different users, IP addresses, passwords, or even completely different solutions occasionally - they rotate these with each challenge spawn on most challenges.
+{icon="circle-info"}
 
 ## Day 1: Create a Python Virtual Environment for ML
 
@@ -37,6 +43,8 @@ If you've used Python for any sort of development before, this workflow should f
 $ pip install numpy pandas scikit-learn matplotlib
 $ pip freeze > requirements.txt
 ```
+
+And that's it - a functional `venv` set up with the necessary packages.
 
 ## Day 2: Set Up and Configure Jupyter Notebook Server
 
