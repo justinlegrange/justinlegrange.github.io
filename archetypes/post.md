@@ -10,6 +10,6 @@ categories: ["themes", "syntax"]
 tags: ["first"]
 ---
 
-## 0x00: A header
+## Content Header.
 
 Placeholder.
