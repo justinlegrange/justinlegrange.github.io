@@ -335,74 +335,64 @@ Note the final line - `branch set to track` tells us that we've set our local re
 
 ## Day 27: Git Revert Some Changes
 
-> [!QUOTE] Problem Prompt
-> The Nautilus application development team was working on a git repository /usr/src/kodekloudrepos/blog present on Storage server in Stratos DC. However, they reported an issue with the recent commits being pushed to this repo. They have asked the DevOps team to revert repo HEAD to last commit. Below are more details about the task:  
->  
+> [!QUOTE]+ Problem Prompt
+> The Nautilus application development team was working on a git repository /usr/src/kodekloudrepos/blog present on Storage server in Stratos DC. However, they reported an issue with the recent commits being pushed to this repo. They have asked the DevOps team to revert repo HEAD to last commit. Below are more details about the task:
+> 
 > In /usr/src/kodekloudrepos/blog git repository, revert the latest commit ( HEAD ) to the previous commit (JFYI the previous commit hash should be with initial commit message ).  
 > Use revert blog message (please use all small letters for commit message) for the new revert commit.
 {icon="circle-question"}
 
-asdf
+This task solution is going to be structured a bit differently than the other ones thus far - the first time around, I kept getting this one wrong repeatedly and had to figure out why. Because of that, I wrote up an explanation section - so my current solution will be first, followed by that. On to the task!
 
-thor@jumphost ~$ ssh natasha@ststor01
-[natasha@ststor01 ~]$ cd /usr/src/kodekloudrepos/blog
-[natasha@ststor01 blog]$ sudo git log
+So the team has a botched commit - let's see what the repo history looks like currently:
 
-```
-commit 8091cb525cd626f2c2622cf717e94195c747ed8c (HEAD -> master, origin/master)
+```console
+[natasha@ststor01 official]$ sudo git log
+commit 84200f0bed66577f1476c9783113548aac67e142 (HEAD -> master, origin/master)
 Author: Admin <admin@kodekloud.com>
-Date:   Sat Jan 3 23:11:31 2026 +0000
+Date:   Fri Jul 17 00:08:37 2026 +0000
 
     add data.txt file
 
-commit 8b1e383b13b2125811cc02461360c2b1b7241750
+commit 967185cef222b13d67121962838a7a33c0028e66
 Author: Admin <admin@kodekloud.com>
-Date:   Sat Jan 3 23:11:31 2026 +0000
+Date:   Fri Jul 17 00:08:37 2026 +0000
 
     initial commit
 ```
 
-```
-[natasha@ststor01 blog]$ sudo git reset 8b1e383b13b2125811cc02461360c2b1b7241750
-Unstaged changes after reset:
-D       info.txt
+And here's how our git log looks after performing the reversion:
 
-[natasha@ststor01 blog]$ sudo git add .
-[natasha@ststor01 blog]$ sudo git commit -m 'revert blog
+```
+[natasha@ststor01 blog]$ sudo git revert HEAD
+[master 52c9a53] revert blog
+ 1 file changed, 1 insertion(+)
+ create mode 100644 info.txt
+[natasha@ststor01 blog]$ sudo git log
+commit 52c9a53b2c21223a204bf81c21a9c09444b5f452 (HEAD -> master)
+Author: Admin <admin@kodekloud.com>
+Date:   Fri Jul 17 00:46:54 2026 +0000
+
+    revert blog
+
+commit 97b6d9e2c0afb23a505c9bdc112d9cb1cddc9fee (origin/master)
+Author: Admin <admin@kodekloud.com>
+Date:   Fri Jul 17 00:42:52 2026 +0000
+
+    add data.txt file
+
+commit fcfe8ff599bc3192a60c9507e58d362a17773ac6
+Author: Admin <admin@kodekloud.com>
+Date:   Fri Jul 17 00:42:52 2026 +0000
+
+    initial commit
 ```
 
-And....failure.
+And that's it - the git history is now pointing to the correct commit for the Nautilus app team and should be good to go!
 
 ### Learning the difference - HEAD vs `COMMIT ID`
 
-So what went wrong? According to other solutions out there, I needed to use `sudo git revert HEAD` instead of resetting to the original commit message. If we do that, the output will change drastically.
-
-Remember that our original `git log` only had two lines - the initial commit, and the update for removing the content. After resetting the HEAD, running `git log` now shows the following:
-
-```
-[natasha@ststor01 official]$ sudo git revert HEAD
-[master 0fdb64d] revert official
- 1 file changed, 1 insertion(+)
- create mode 100644 info.txt
-[natasha@ststor01 official]$ sudo git log
-commit 0fdb64d3e1e7ad82d879ccc0caed8c7b1e4c17b6 (HEAD -> master)
-Author: Admin <admin@kodekloud.com>
-Date:   Wed Jan 7 01:40:03 2026 +0000
-
-    revert official
-
-commit 44a26504b7c96c7fb0900466d7b87ca03082df1a (origin/master)
-Author: Admin <admin@kodekloud.com>
-Date:   Wed Jan 7 01:37:32 2026 +0000
-
-    add data.txt file
-
-commit 18b21f2009dbd84f1a1be51deee96badef6307df
-Author: Admin <admin@kodekloud.com>
-Date:   Wed Jan 7 01:37:32 2026 +0000
-
-    initial commit
-```
+So now onto how I failed a couple of times before getting this lab right - what went wrong? The first few times I did this lab, I was using `git reset` - I needed to use `sudo git revert HEAD` instead of fully resetting to the original commit message. If we do that, the output will change drastically.
 
 Where I screwed up: `git revert` is not the same as `git reset`. `git revert` adds a new commit that counteracts the changes you messed up on, whereas `git reset` completely moves the commit history back and nukes the new changes entirely. The most likely scenario is that the grader is running its own `git log` and comparing line-by-line with something like `diff`, so I was getting it wrong for not having the "incorrect" commit entry still in the log.
 
