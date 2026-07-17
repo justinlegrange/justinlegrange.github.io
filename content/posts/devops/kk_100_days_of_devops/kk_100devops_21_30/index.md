@@ -188,28 +188,28 @@ That's it!
 ## Day 25: Git Merge Branches
 
 > [!QUOTE]+ Problem Prompt
-> The Nautilus application development team has been working on a project repository /opt/official.git. This repo is cloned at /usr/src/kodekloudrepos on storage server in Stratos DC. They recently shared the following requirements with DevOps team:
+> The Nautilus application development team has been working on a project repository /opt/news.git. This repo is cloned at /usr/src/kodekloudrepos on storage server in Stratos DC. They recently shared the following requirements with DevOps team:
 > 
-> Create a new branch devops in /usr/src/kodekloudrepos/official repo from master and copy the /tmp/index.html file (present on storage server itself) into the repo. Further, add/commit this file in the new branch and merge back that branch into master branch. Finally, push the changes to the origin for both of the branches.
+> Create a new branch xfusion in /usr/src/kodekloudrepos/news repo from master and copy the /tmp/index.html file (present on storage server itself) into the repo. Further, add/commit this file in the new branch and merge back that branch into master branch. Finally, push the changes to the origin for both of the branches.
 {icon="circle-question"}
 
 This is the next evolution of Day 24 - now that we can _create_ branches, we need to know how to perform work on them, and eventually merge them back into the main branch when we're finished.
 
-We start by moving into our repo and creating a new branch `devops`.
+We start by moving into our repo and creating a new branch `xfusion`.
 
 ```console
-[natasha@ststor01 ~]$ cd /usr/src/kodekloudrepos/official/
-[natasha@ststor01 official]$ sudo git checkout -b devops master
-Switched to a new branch 'devops'
+[natasha@ststor01 ~]$ cd /usr/src/kodekloudrepos/news/
+[natasha@ststor01 news]$ sudo git checkout -b xfusion master
+Switched to a new branch 'xfusion'
 ```
 
 Now that we've got a shiny new branch, we simulate having done some development work by copying in the new `index.html` file. In order to eventually perform the push and merge our work, we have to track the file with a `git add` to stage it, and then a `git commit`:
 
 ```console
-[natasha@ststor01 official]$ sudo cp /tmp/index.html .
-[natasha@ststor01 official]$ sudo git add .
-[natasha@ststor01 official]$ sudo git commit -m "Adding index.html"
-[devops eb98f18] Adding index.html
+[natasha@ststor01 news]$ sudo cp /tmp/index.html .
+[natasha@ststor01 news]$ sudo git add .
+[natasha@ststor01 news]$ sudo git commit -m "Adding index.html"
+[xfusion d71bdd1] Adding index.html
  1 file changed, 1 insertion(+)
  create mode 100644 index.html
 ```
@@ -244,11 +244,11 @@ Incorporates changes from the named commits (since the time their histories dive
 With the explanation piece out of the way, let's actually try out merging the branches. We switch to the branch we're merging _into_, in this case `master`, and then merge our feature branch:
 
 ```console
-[natasha@ststor01 official]$ sudo git checkout master
+[natasha@ststor01 news]$ sudo git checkout master
 Switched to branch 'master'
 Your branch is up to date with 'origin/master'.
-[natasha@ststor01 official]$ sudo git merge devops
-Updating d784e64..eb98f18
+[natasha@ststor01 news]$ sudo git merge xfusion
+Updating 2b5920a..d71bdd1
 Fast-forward
  index.html | 1 +
  1 file changed, 1 insertion(+)
@@ -258,47 +258,80 @@ Fast-forward
 As expected, no merge conflicts were encountered. Now all we have left to do is push the changes to update the upstream on what just happened:
 
 ```console
-[natasha@ststor01 official]$ sudo git push
+[natasha@ststor01 news]$ sudo git push -u origin master
 Enumerating objects: 4, done.
 Counting objects: 100% (4/4), done.
 Delta compression using up to 16 threads
 Compressing objects: 100% (2/2), done.
 Writing objects: 100% (3/3), 334 bytes | 334.00 KiB/s, done.
 Total 3 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
-To /opt/official.git
-   d784e64..eb98f18  master -> master
+To /opt/news.git
+   2b5920a..d71bdd1  master -> master
+branch 'master' set up to track 'origin/master'.
+[natasha@ststor01 news]$ sudo git push -u origin xfusion
+Total 0 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+To /opt/news.git
+ * [new branch]      xfusion -> xfusion
+branch 'xfusion' set up to track 'origin/xfusion'.
 ```
+
+It's worth noting that you can't _just_ push `master` up and assume that it published both branches - that was something that tripped me up for a bit. You need to manually publish _both_ branches by pushing them to the origin. This makes sense from a development standpoint - if you were working on a local branch, the origin would have no idea that it existed **until** you pushed the branch to it.
 
 ## Day 26: Git Manage Remotes
 
-> [!QUOTE] Problem Prompt
-> The xFusionCorp development team added updates to the project that is maintained under /opt/beta.git repo and cloned under /usr/src/kodekloudrepos/beta. Recently some changes were made on Git server that is hosted on Storage server in Stratos DC. The DevOps team added some new Git remotes, so we need to update remote on /usr/src/kodekloudrepos/beta repository as per details mentioned below:
+> [!QUOTE]+ Problem Prompt
+> The xFusionCorp development team added updates to the project that is maintained under /opt/official.git repo and cloned under /usr/src/kodekloudrepos/official. Recently some changes were made on Git server that is hosted on Storage server in Stratos DC. The DevOps team added some new Git remotes, so we need to update remote on /usr/src/kodekloudrepos/official repository as per details mentioned below:
 > 
-> a. In /usr/src/kodekloudrepos/beta repo add a new remote dev_beta and point it to /opt/xfusioncorp_beta.git repository.  
-> b. There is a file /tmp/index.html on same server; copy this file to the repo and add/commit to master branch.  
-> c. Finally push master branch to this new remote origin.
+> A. In /usr/src/kodekloudrepos/official repo add a new remote dev_official and point it to /opt/xfusioncorp_official.git repository.  
+> B. There is a file /tmp/index.html on same server; copy this file to the repo and add/commit to master branch.  
+> C. Finally push master branch to this new remote origin.
 {icon="circle-question"}
 
-asdf
+In the same vein as Day 25, how do we tell our branches _where_ to send the data? That _where_ is the `remote` - and if we check the usage information, here's the format that git expects:
+
+```console
+[natasha@ststor01 official]$ sudo git remote add
+usage: git remote add [<options>] <name> <url>
+
+    -f, --[no-]fetch      fetch the remote branches
+    --[no-]tags           import all tags and associated objects when fetching
+                          or do not fetch any tag at all (--no-tags)
+    -t, --[no-]track <branch>
+                          branch(es) to track
+    -m, --[no-]master <branch>
+                          master branch
+    --[no-]mirror[=(push|fetch)]
+                          set up remote as a mirror to push to or fetch from
+```
+
+So following that, we can set a new upstream like so:
+
+```console
+[natasha@ststor01 official]$ sudo git remote add dev_official /opt/xfusioncorp_official.git
+```
+
+Once that's set, we just need to add our work and push to the new upstream. Adding the work should look familiar - the only difference is that we use `git push -u dev_official master` to push our local copy of `master` to the new `dev_official` remote origin, which points to `/opt/xfusioncorp_official.git`.
 
 ```
-thor@jumphost ~$ ssh natasha@ststor01
-[natasha@ststor01 ~]$ cd /usr/src/kodekloudrepos/beta/
+[natasha@ststor01 official]$ sudo cp /tmp/index.html .
+[natasha@ststor01 official]$ sudo git add .
+[natasha@ststor01 official]$ sudo git commit -m "Adding index.html"
+[master 624ed2a] Adding index.html
+ 1 file changed, 10 insertions(+)
+ create mode 100644 index.html
+[natasha@ststor01 official]$ sudo git push -u dev_official master
+Enumerating objects: 6, done.
+Counting objects: 100% (6/6), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (6/6), 587 bytes | 587.00 KiB/s, done.
+Total 6 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+To /opt/xfusioncorp_official.git
+ * [new branch]      master -> master
+branch 'master' set up to track 'dev_official/master'.
 ```
 
-from the man page:
-```
-git remote add [-t <branch>] [-m <master>] [-f] [--[no-]tags] [--mirror=(fetch|push)] <name> <URL>
-```
-
-so:
-```
-[natasha@ststor01 ~]$ sudo git remote add dev_beta /opt/xfusioncorp_beta.git
-[natasha@ststor01 beta]$ sudo cp /tmp/index.html .
-[natasha@ststor01 beta]$ sudo git add .
-[natasha@ststor01 beta]$ sudo git commit -m "Adding index.html"
-[natasha@ststor01 beta]$ sudo git push -u dev_beta master
-```
+Note the final line - `branch set to track` tells us that we've set our local repository to send data to the upstream. Now when we run a regular `git push`, it should send directly to `dev_official/master` rather than `origin/master`.
 
 ## Day 27: Git Revert Some Changes
 
