@@ -1,7 +1,7 @@
 ---
-title: "My 1st post"
-date: 2026-12-02 # YYYY-MM-DD
-# lastMod: 2026-06-24
+title: '{{ replace .File.ContentBaseName "-" " " | title }}'
+date: '{{ .Date }}' # YYYY-MM-DD
+lastMod: '{{ .Date }}'
 summary: "Desc Text."
 draft: true
 # series: ["Themes Guide"]
