@@ -16,6 +16,16 @@ Placeholder.
 
 ## Architectural Decisions
 
+Placeholder.
+
 ## Building the Navbar
+
+Placeholder.
+
+## Content Pages
+
+Placeholder.
+
+## Working on the Blog Listing
 
 Placeholder.
