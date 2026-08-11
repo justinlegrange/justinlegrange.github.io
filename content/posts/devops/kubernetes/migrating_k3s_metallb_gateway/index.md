@@ -170,7 +170,7 @@ ufw allow from 10.42.0.0/16 to any #pods
 ufw allow from 10.43.0.0/16 to any #services
 ```
 
-No matter what firewall you use, this is a (potentially non-exhaustive) list of potential traffic sources you may want to look into adding:
+No matter what firewall you use, this is a (potentially non-exhaustive) list of traffic sources you may want to look into adding:
 ```
 # DEFAULT K3S ROUTES
 10.42.0.0/16 #pods
@@ -497,7 +497,7 @@ Upgrading traefik
 Error: UPGRADE FAILED: execution error at (traefik/templates/gateway.yaml:52:12): ERROR: certificateRefs needs to be specified using HTTPS
 ```
 
-...which makes a ton of sense. In order to use TLS termination, you need to _give_ the service a TLS key to encrypt/decrypt the traffic with. Let's set up a quick self-signed certificate, just to test that we can get the service functioning correctly - we'll deploy an actual, signed certificate later on.
+...which makes a ton of sense. In order to use TLS termination, you need to _give_ the service a TLS key to use. Let's set up a quick self-signed certificate, just to test that we can get the service functioning correctly - we'll deploy an actual, signed certificate later on.
 
 ```console
 [controlplane]$ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=*.jlegrange.dev"
