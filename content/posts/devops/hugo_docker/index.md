@@ -23,4 +23,8 @@ Placeholder.
 
 ## Setting Up Aliases
 
-## 
+Placeholder.
+
+## Getting Our Content Rendered
+
+Placeholder.
