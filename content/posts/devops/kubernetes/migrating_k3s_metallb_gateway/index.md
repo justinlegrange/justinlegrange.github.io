@@ -4,7 +4,7 @@ date: '2026-07-23' # YYYY-MM-DD
 lastMod: '2026-07-29'
 summary: "In this post, I go over the mistakes I made when trying to migrate my local K3s cluster from ServiceLB to MetalLB and setting up the Traefik Gateway API."
 draft: false
-# series: ["Themes Guide"]
+# series: ["Kubernetes Homelab"]
 # series_order: 1
 categories: ["kubernetes", "devops"]
 tags: ["kubernetes", "metallb", "traefik", "gateway api"]
